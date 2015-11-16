@@ -1,4 +1,8 @@
 .metadata
 .settings
+.cproject
+.project
+
 .DS_Store
 Debug
+Default
