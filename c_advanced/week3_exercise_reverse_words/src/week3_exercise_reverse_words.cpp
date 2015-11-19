@@ -1,5 +1,5 @@
 /*
- * week3_reverse_words.cpp
+ * week3_exercise_reverse_words.cpp
  *
  *  Created on: 2015Äê11ÔÂ19ÈÕ
  *      Author: sunxiaoling
