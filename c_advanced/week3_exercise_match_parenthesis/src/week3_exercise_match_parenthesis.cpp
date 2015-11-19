@@ -1,7 +1,7 @@
 /*
  * week3_exercise_match_parenthesis.cpp
  *
- *  Created on: 2015Äê11ÔÂ19ÈÕ
+ *  Created on: 2015å¹´11æœˆ19æ—¥
  *      Author: sunxiaoling
  */
 
@@ -11,20 +11,20 @@ using namespace std;
 const int length = 101;
 char s[length] = { '\0' };
 bool flag[length] = { false };
-int index = -1;
+int p = -1;
 
 void match() {
-	index++;
-	char c = s[index];
-	if (c == '\0') { //½áÎ²
+	p++;
+	char c = s[p];
+	if (c == '\0') { //ç»“å°¾
 		return;
 	}
-	if (c == ')') { //Óöµ½ÓÒÀ¨ºÅ
-		//ÏòÇ°Ñ°ÕÒÓëËüÆ¥ÅäµÄ×óÀ¨ºÅ
-		for (int i = index - 1; i >= 0; i--) {
-			//ÕÒµ½Æ¥ÅäµÄÊ±£¬¸üĞÂ¶ÔÓ¦Î»ÖÃµÄflag
+	if (c == ')') { //é‡åˆ°å³æ‹¬å·
+		//å‘å‰å¯»æ‰¾ä¸å®ƒåŒ¹é…çš„å·¦æ‹¬å·
+		for (int i = p - 1; i >= 0; i--) {
+			//æ‰¾åˆ°åŒ¹é…çš„æ—¶ï¼Œæ›´æ–°å¯¹åº”ä½ç½®çš„flag
 			if (s[i] == '(' && !flag[i]) {
-				flag[index] = true;
+				flag[p] = true;
 				flag[i] = true;
 				break;
 			}
@@ -44,7 +44,7 @@ void show_result() {
 				cout << '$';
 			} else if (s[i] == ')') {
 				cout << '?';
-			} else {		//ÆäËû×Ö·û
+			} else {		//å…¶ä»–å­—ç¬¦
 				cout << ' ';
 			}
 		} else {
@@ -54,15 +54,23 @@ void show_result() {
 	cout << endl;
 }
 
+void reset() {
+	for (int i = 0; i < length; i++) {
+		s[i] = '\0';
+		flag[i] = false;
+	}
+	p = -1;
+}
+
 int main() {
 	cin.getline(s, length);
 	while (s[0] != '\0') {
 		match();
 		show_result();
 
+		reset();
 		cin.getline(s, length);
 	}
 
 	return 0;
 }
-
