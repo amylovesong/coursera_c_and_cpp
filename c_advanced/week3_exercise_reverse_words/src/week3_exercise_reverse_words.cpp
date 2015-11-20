@@ -1,7 +1,7 @@
 /*
  * week3_exercise_reverse_words.cpp
  *
- *  Created on: 2015Äê11ÔÂ19ÈÕ
+ *  Created on: 2015å¹´11æœˆ19æ—¥
  *      Author: sunxiaoling
  */
 
@@ -18,7 +18,7 @@ char reverse() {
 	if (tmp == ' ') {
 		return tmp;
 	}
-	if (tmp == '\0') {//½áÊø
+	if (tmp == '\0') {//ç»“æŸ
 		return tmp;
 	} else {
 		result = reverse();

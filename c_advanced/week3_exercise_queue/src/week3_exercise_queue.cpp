@@ -1,7 +1,7 @@
 /*
  * week3_exercise_queue.cpp
  *
- *  Created on: 2015Äê11ÔÂ19ÈÕ
+ *  Created on: 2015å¹´11æœˆ19æ—¥
  *      Author: sunxiaoling
  */
 
@@ -25,10 +25,10 @@ void queue() {
 	if (boy == '\0') {
 		boy = child;
 	}
-	if (child != boy) { //Óöµ½Ò»¸öÐ¡Å®º¢
+	if (child != boy) { //é‡åˆ°ä¸€ä¸ªå°å¥³å­©
 		girl = child;
 		p_girl = index;
-		//ÏòÇ°ÕÒÓëËýÒ»ÆðµÄÐ¡ÄÐº¢
+		//å‘å‰æ‰¾ä¸Žå¥¹ä¸€èµ·çš„å°ç”·å­©
 		for (int i = p_girl - 1; i >= 0; i--) {
 			if (children[i] == boy && !flag[i]) {
 				cout << i << ' ' << p_girl << endl;

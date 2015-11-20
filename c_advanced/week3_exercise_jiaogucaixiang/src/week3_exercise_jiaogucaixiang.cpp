@@ -1,7 +1,7 @@
 /*
  * week3_exercise_jiaogucaixiang.cpp
  *
- *  Created on: 2015Äê11ÔÂ19ÈÕ
+ *  Created on: 2015å¹´11æœˆ19æ—¥
  *      Author: sunxiaoling
  */
 
@@ -12,7 +12,7 @@ int tmp = 0;
 
 void fun(int num) {
 	if (num > 1) {
-		if (num % 2 == 0) { //Å¼Êı
+		if (num % 2 == 0) { //å¶æ•°
 			tmp = num / 2;
 			cout << num << "/2=" << tmp << endl;
 		} else {
