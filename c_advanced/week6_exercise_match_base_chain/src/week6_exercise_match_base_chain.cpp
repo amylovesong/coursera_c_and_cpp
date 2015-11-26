@@ -8,7 +8,7 @@
 #include <iostream>
 using namespace std;
 
-void match_base_chain(char *p) {
+void match_base_chain(const char *p) {
 	while (*p != '\0') {
 		switch (*p) {
 		case 'A':
