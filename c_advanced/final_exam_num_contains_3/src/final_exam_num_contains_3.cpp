@@ -11,12 +11,12 @@ using namespace std;
 const int MAX_NUM_LENGTH = 6;
 int index = 0;
 
-char * convertInt2Array(int num, char *s) {
+void convertInt2Array(int num, char s[]) {
 	if (num / 10 != 0) {
 		convertInt2Array(num / 10, s);
 	}
 	s[index++] = num % 10 + 48;
-	return s;
+	return;
 }
 
 void check(int num, int k) {
