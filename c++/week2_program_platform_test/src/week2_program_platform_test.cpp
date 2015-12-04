@@ -1,7 +1,7 @@
 /*
  * week2_program_platform_test.cpp
  *
- *  Created on: 2015Äê12ÔÂ3ÈÕ
+ *  Created on: 2015å¹´12æœˆ3æ—¥
  *      Author: sunxiaoling
  */
 
