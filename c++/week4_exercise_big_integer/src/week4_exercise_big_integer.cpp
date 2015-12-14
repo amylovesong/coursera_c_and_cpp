@@ -11,6 +11,8 @@
 #include <stdlib.h>
 using namespace std;
 
+const bool debug = false;
+
 void initArray(short * array, int length) {
 	for (int i = 0; i < length; i++) {
 		array[i] = 0;
@@ -18,7 +20,9 @@ void initArray(short * array, int length) {
 }
 
 void showArray(const short * array, int length) {
-	cout << "test showArray length:" << length << " content:";
+	if (debug) {
+		cout << "test showArray length:" << length << " content:";
+	}
 	int i = length - 1;
 	while (i >= 0) {
 		cout << array[i];
@@ -39,7 +43,6 @@ bool isZeroArray(short * array, int length) {
 }
 
 class BigInt {
-//public:
 	bool flagPositive;
 	short *num; //index为0的元素是整数的最低位
 	int length; //数字位的长度
@@ -91,7 +94,9 @@ BigInt::~BigInt() {
 }
 
 BigInt & BigInt::operator+(const BigInt & b) {
-	cout << "test operator+() *this:" << *this << " b:" << b << endl;
+	if (debug) {
+		cout << "test operator+() *this:" << *this << " b:" << b << endl;
+	}
 	short * tmpBig = NULL, *tmpSmall = NULL;
 	int bigNumLength = 0, smallNumLength = 0;
 	if (compare(*this, b)) {
@@ -130,8 +135,9 @@ BigInt & BigInt::operator+(const BigInt & b) {
 	static BigInt result;
 	simplifyArray(result, rNum, rLength);
 //	BigInt & result = tmp;
-
-	cout << "test operator+ final result:" << result << endl;
+	if (debug) {
+		cout << "test operator+ final result:" << result << endl;
+	}
 	return result;
 
 //	length = rLength;
@@ -160,8 +166,10 @@ BigInt & BigInt::operator -(const BigInt & b) {
 }
 
 void simplifyArray(BigInt & dest, const short * rNum, int rLength) {
-	cout << "simplifyArray rNum:";
-	showArray(rNum, rLength);
+	if (debug) {
+		cout << "simplifyArray rNum:";
+		showArray(rNum, rLength);
+	}
 	//化简最后的结果，去掉高位的0
 	int index = -1;
 	for (int i = rLength - 1; i >= 0; i--) {
@@ -170,7 +178,9 @@ void simplifyArray(BigInt & dest, const short * rNum, int rLength) {
 			break;
 		}
 	}
-	cout << "test simplifyArray index:" << index << endl;
+	if (debug) {
+		cout << "test simplifyArray index:" << index << endl;
+	}
 	if (index == -1) { //全0
 //		tmpBig.length = 1;
 //		tmpBig.flagPositive = true;
@@ -189,7 +199,9 @@ void simplifyArray(BigInt & dest, const short * rNum, int rLength) {
 }
 
 BigInt & BigInt::operator*(const BigInt & b) {
-	cout << "test operator*() *this:" << *this << " b:" << b << endl;
+	if (debug) {
+		cout << "test operator*() *this:" << *this << " b:" << b << endl;
+	}
 
 	BigInt result("0");
 //	result.length = max(length, b.length) * 2;
@@ -231,7 +243,9 @@ BigInt & BigInt::operator*(const BigInt & b) {
 //	showArray(result.num, result.length);
 	delete[] tmp;
 
-	cout << "test operator*() result:" << result << endl;
+	if (debug) {
+		cout << "test operator*() result:" << result << endl;
+	}
 
 	static BigInt finalResult;
 	simplifyArray(finalResult, result.num, result.length);
@@ -241,7 +255,10 @@ BigInt & BigInt::operator*(const BigInt & b) {
 //	num = new short[length];
 //	memcpy(num, result.num, length * sizeof(short));
 
-	cout << "test operator*() finalResult:" << finalResult << endl;
+	if (debug) {
+		cout << "test operator*() finalResult:" << finalResult << endl;
+	}
+
 	return finalResult;
 }
 
@@ -256,54 +273,73 @@ BigInt & BigInt::operator =(const BigInt & b) {
 	delete[] num;
 	num = new short[length];
 	memcpy(num, b.num, length * sizeof(short));
+
 	return *this;
 }
 
 BigInt & BigInt::operator /(const BigInt & b) {
-	int rLength = 0;
-	short * rNum = NULL;
-
-	cout << "test / b:" << b << endl;
-//	if (b.length == 1 && b.num[0] == 1) { //b=1
-//		return *this;
-//	}
-//	if (!compare(*this, b)) { // a<b
-////		BigInt zero("0");
-//		*this = BigInt("0");
-//		return *this;
-//	}
-//	if (*this == b) { //a=b
-////		BigInt one("1");
-//		*this = BigInt("1");
-//		return *this;
-//	}
-
-	//a>b
-	BigInt result("1"), step("2");
-	BigInt tmp = b;
-	cout << "===test / before while tmp:" << tmp << endl;
-	int i = 0;
-	while (true) {
-		if (compare(tmp, *this)) {
-			break;
-		}
-		result = result * step;
-		cout << i << "===test / while result:" << result << endl;
-		tmp = result * b;
-		cout << i << "===test / while tmp:" << tmp << endl << endl;
-		i++;
+	if (debug) {
+		cout << "test / b:" << b << endl;
 	}
-	cout << "===test final result:" << result << endl;
+	static BigInt finalResult;
+	if (b.length == 1 && b.num[0] == 1) { //b=1
+		finalResult = *this;
+		return finalResult;
+	}
+	if (*this == b) { //a=b
+		finalResult = BigInt("1");
+		return finalResult;
+	}
+	if (compare(*this, b)) { //a>b
+		BigInt zero("0");
+		finalResult.length = length;
+		finalResult.num = new short[finalResult.length];
+		initArray(finalResult.num, finalResult.length);
 
-	length = rLength;
-	delete[] num;
-	num = rNum;
+		int l = length - b.length;
+		BigInt tmpB;
+		tmpB.length = length;
+		tmpB.num = new short[tmpB.length];
+		BigInt tmpThis = *this;
+		BigInt remain = *this;
+		for (int i = l; i >= 0; i--) {
+			if (remain == zero) {
+				break;
+			}
+			initArray(tmpB.num, tmpB.length);
+			tmpB.length = b.length + i;
+			// 把b向左移动i位
+			memcpy(tmpB.num + i, b.num, b.length * sizeof(short));
+			int counter = 0;
+			while (true) {
+				if (!compare(remain, tmpB)) {
+					break;
+				}
+				remain = remain - tmpB;
+				counter++;
+			}
+			if (debug) {
+				cout << "test / i:" << i << " counter:" << counter << endl;
+			}
+			if (counter > 0) {
+				finalResult.num[i] = counter;
+			}
+		}
 
-	return *this;
+		if (debug) {
+			cout << "===test final result:" << finalResult << endl;
+		}
+		return finalResult;
+	} else { // a<b
+		finalResult = BigInt("0");
+		return finalResult;
+	}
 }
 
 ostream & operator<<(ostream & o, const BigInt & b) {
-	cout << "length:" << b.length << " num:" << b.num << " content:";
+	if (debug) {
+		cout << "length:" << b.length << " num:" << b.num << " content:";
+	}
 
 	if (isZeroArray(b.num, b.length)) { //全0，直接输出
 		cout << 0;
@@ -334,11 +370,13 @@ ostream & operator<<(ostream & o, const BigInt & b) {
  * return true if a >= b;
  */
 bool compare(const BigInt & a, const BigInt & b) {
-	cout << "test compare() a:" << a << " b:" << b;
+	if (debug) {
+		cout << "test compare() a:" << a << " b:" << b;
+	}
 	bool result = true;
 
 	if (a.flagPositive == b.flagPositive) { //同符号
-		//先根据有效数字位判断绝对值大小
+//先根据有效数字位判断绝对值大小
 		if (a.length > b.length) {
 			result = true;
 		} else if (a.length < b.length) {
@@ -354,7 +392,7 @@ bool compare(const BigInt & a, const BigInt & b) {
 				}
 			}
 		}
-		//如果两数同负，则取反
+//如果两数同负，则取反
 		if (!a.flagPositive) {
 			result = ~result;
 		}
@@ -362,7 +400,9 @@ bool compare(const BigInt & a, const BigInt & b) {
 		result = (a.flagPositive == true);
 	}
 
-	cout << " result:" << (result ? "a>=b" : "a<b") << endl;
+	if (debug) {
+		cout << " result:" << (result ? "a>=b" : "a<b") << endl;
+	}
 	return result;
 }
 
@@ -386,7 +426,9 @@ BigInt & mMinus(const BigInt & big, const BigInt & small) {
 		rNum[i] = n;
 	}
 	for (i = tmpSmall.length; i < tmpBig.length; i++) {
-		cout << "test tmpBig.num[" << i << "]:" << tmpBig.num[i] << endl;
+		if (debug) {
+			cout << "test tmpBig.num[" << i << "]:" << tmpBig.num[i] << endl;
+		}
 		if (tmpBig.num[i] < 0) { //由于借位造成的高位为负数的情况
 			tmpBig.num[i + 1] -= 1;
 			tmpBig.num[i] += 10;
@@ -397,7 +439,9 @@ BigInt & mMinus(const BigInt & big, const BigInt & small) {
 	static BigInt result;
 	simplifyArray(result, rNum, rLength);
 	delete[] rNum;
-	cout << "minus final result:" << result << endl;
+	if (debug) {
+		cout << "minus final result:" << result << endl;
+	}
 	return result;
 }
 
