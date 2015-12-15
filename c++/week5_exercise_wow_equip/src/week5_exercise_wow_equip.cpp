@@ -1,7 +1,7 @@
 /*
- * week3_exercise_prepare_for_battle.cpp
+ * week5_exercise_wow_equip.cpp
  *
- *  Created on: 2015年12月7日
+ *  Created on: 2015年12月15日
  *      Author: sunxiaoling
  */
 
@@ -9,9 +9,14 @@
 #include <iomanip>
 using namespace std;
 
+//司令部
 const string RED_HQ = "red", BLUE_HQ = "blue";
+//武士的种类
 const string ICEMAN = "iceman", LION = "lion", WOLF = "wolf", NINJA = "ninja",
 		DRAGON = "dragon";
+//武器的种类
+const string SWORD = "sword", BOMB = "bomb", ARROW = "arrow";
+const string EQUIPMENTS[3] = { SWORD, BOMB, ARROW };
 
 const int INDEX_ICEMAN = 0, INDEX_LION = 1, INDEX_WOLF = 2, INDEX_NINJA = 3,
 		INDEX_DRAGON = 4;
@@ -25,7 +30,68 @@ private:
 public:
 	Warrior(string category, int num, int health, int attack = 0) :
 			category(category), num(num), health(health), attack(attack) {
-		cout << category << " " << num << " born with strength " << health;
+		cout << this->category << " " << this->num << " born with strength "
+				<< this->health;
+	}
+};
+
+class Dragon: public Warrior {
+	string equipment;
+	float morale;
+public:
+	Dragon(int num, int health, float morale) :
+			Warrior(DRAGON, num, health) {
+		equipment = EQUIPMENTS[num % 3];
+		this->morale = morale;
+	}
+	void showInfo() {
+		cout << "It has a " << equipment << ",and it's morale is " << fixed
+				<< setprecision(2) << morale << endl;
+	}
+};
+
+class Ninja: public Warrior {
+	string equipments[2];
+public:
+	Ninja(int num, int health) :
+			Warrior(NINJA, num, health) {
+		equipments[0] = EQUIPMENTS[num % 3];
+		equipments[1] = EQUIPMENTS[(num + 1) % 3];
+	}
+	void showInfo() {
+		cout << "It has a " << equipments[0] << " and a " << equipments[1]
+				<< endl;
+	}
+};
+
+class Iceman: public Warrior {
+	string equipment;
+public:
+	Iceman(int num, int health) :
+			Warrior(ICEMAN, num, health) {
+		equipment = EQUIPMENTS[num % 3];
+	}
+	void showInfo() {
+		cout << "It has a " << equipment << endl;
+	}
+};
+
+class Lion: public Warrior {
+	int loyalty;
+public:
+	Lion(int num, int health, int loyalty) :
+			Warrior(LION, num, health) {
+		this->loyalty = loyalty;
+	}
+	void showInfo() {
+		cout << "It's loyalty is " << loyalty << endl;
+	}
+};
+
+class Wolf: public Warrior {
+public:
+	Wolf(int num, int health) :
+			Warrior(WOLF, num, health) {
 	}
 };
 
@@ -66,11 +132,27 @@ private:
 			return false;
 		}
 		cout << name << " ";
-		Warrior w = Warrior(category, num, health);
 		lifeValue -= health;
-		cout << ",";
-		counter4Category(category);
-		cout << endl;
+		if (category == DRAGON) {
+			Dragon dragon(num, health, lifeValue / (health * 1.0f));
+			counter4Category(category);
+			dragon.showInfo();
+		} else if (category == NINJA) {
+			Ninja ninja(num, health);
+			counter4Category(category);
+			ninja.showInfo();
+		} else if (category == ICEMAN) {
+			Iceman iceman(num, health);
+			counter4Category(category);
+			iceman.showInfo();
+		} else if (category == LION) {
+			Lion lion(num, health, lifeValue);
+			counter4Category(category);
+			lion.showInfo();
+		} else {
+			Wolf wolf(num, health);
+			counter4Category(category);
+		}
 		return true;
 	}
 
@@ -91,8 +173,8 @@ private:
 			return;
 		}
 		counter[index]++;
-		cout << counter[index] << " " << category << " in " << name
-				<< " headquarter";
+		cout << "," << counter[index] << " " << category << " in " << name
+				<< " headquarter" << endl;
 	}
 
 	void stop() {
