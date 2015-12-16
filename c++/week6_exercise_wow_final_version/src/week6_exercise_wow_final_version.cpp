@@ -110,19 +110,22 @@ class City {
 	Warrior redWarrior();
 	Warrior blueWarrior();
 public:
-	City(int id, int elements) :
-			id(id), elements(elements) {
+	City(int id) :
+			id(id) {
 		flag = "";
+		elements = 0;
 	}
 	City() {
 		id = 0;
 		flag = "";
 		elements = 0;
 	}
+	void createElements() {
+		elements += 10;
+	}
 };
 
 class Headquarter {
-private:
 	string name;
 	int totalElements;
 	bool stopped;
@@ -188,34 +191,18 @@ public:
 		//当成功制造某个武士时，reset flag
 		if (createWarrior(categoryOrder[index], id, elementOrder[index],
 				forceOrder[index])) {
-			createFlag = 0;
-			id++;
-		} else {
-			createFlag++;
-		}
-		if (index >= 4) {
-			index = 0;
-		} else {
-			index++;
+
 		}
 
-		//如果司令部中的生命元不足以制造某个按顺序应该制造的武士，那么司令部就试图制造下一个。
-		if (createFlag > 0 && createFlag < 5) {
-			return true;
-		}
-		//所有武士都不能制造了
-		if (createFlag >= 5) {
-			stop();
-			return false;
-		}
-		//当前武士制造成功
+		//如果司令部中的生命元不足以制造某个按顺序应该制造的武士，则等待下一次
+
 		return false;
 	}
 };
 
 City * initCitys(City * citys, int amount) {
 	for (int i = 0; i < amount; i++) {
-
+		citys[i] = City(i + 1);
 	}
 
 	return citys;
@@ -254,29 +241,13 @@ int main() {
 				blueForce);
 
 		cout << "Case:" << i << endl;
-		int time = 0;
-		while (true) {
-			//红方
-			if (!redHeadquarter.isStopped()) {
-				cout << setfill('0') << setw(3) << time << " ";
-				//成功制造当前武士，或者停止制造，由蓝方继续
-				while (redHeadquarter.createWarriorsByOrder()) {
+		for (int time = 0; time <= T; time++) {
+			switch (time % 60) {
+			case 0://第0分，制造武士
 
-				}
-			}
-			//蓝方
-			if (!blueHeadquarter.isStopped()) {
-				cout << setfill('0') << setw(3) << time << " ";
-				//成功制造当前武士，或者停止制造，由红方继续
-				while (blueHeadquarter.createWarriorsByOrder()) {
-
-				}
-			}
-			//如果两方都停止制造，则结束
-			if (redHeadquarter.isStopped() && blueHeadquarter.isStopped()) {
 				break;
-			} else {
-				time++;
+			default:
+				break;
 			}
 		}
 	}
