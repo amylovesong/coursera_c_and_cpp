@@ -9,7 +9,7 @@
 #include <iomanip>
 using namespace std;
 
-const bool debug = true;
+const bool debug = false;
 
 //司令部
 const string RED_HQ = "red", BLUE_HQ = "blue";
@@ -17,17 +17,17 @@ int RED_HQ_CITY_ID = 0, BLUE_HQ_CITY_ID = 0;
 //武士的种类
 const string ICEMAN = "iceman", LION = "lion", WOLF = "wolf", NINJA = "ninja",
 		DRAGON = "dragon";
+const string Categorys[5] = { DRAGON, NINJA, ICEMAN, LION, WOLF };
+int Elements[5], Forces[5];
+const int INDEX_DRAGON = 0, INDEX_NINJA = 1, INDEX_ICEMAN = 2, INDEX_LION = 3,
+		INDEX_WOLF = 4;
 //武器的种类
 const string SWORD = "sword", BOMB = "bomb", ARROW = "arrow";
 const string WEAPONS[3] = { SWORD, BOMB, ARROW };
 int R = 0;
-
 //旗帜
 const string RED_FLAG = "red flag";
 const string BLUE_FLAG = "blue flag";
-
-const int INDEX_ICEMAN = 0, INDEX_LION = 1, INDEX_WOLF = 2, INDEX_NINJA = 3,
-		INDEX_DRAGON = 4;
 
 void showFormatTime(int time) {
 	cout << setfill('0') << setw(3) << time / 60 << ':' << setw(2) << time % 60
@@ -42,15 +42,21 @@ public:
 	Weapon(int num, string category) :
 			num(num), category(category) {
 	}
+	virtual ~Weapon() {
+	}
+	int getNum() {
+		return num;
+	}
 	string getCategory() {
 		return category;
 	}
+	virtual void showInfo()=0;
 };
 
 class Sword: public Weapon {
 	int force;
 public:
-	Sword(int force = 0) :
+	Sword(int force) :
 			Weapon(0, SWORD), force(force) {
 	}
 	void setForce(int force) {
@@ -65,12 +71,18 @@ public:
 	void afterBattle() {
 		force = force * 4 / 5; //每经过一次战斗(不论是主动攻击还是反击)，就会变钝，攻击力变为本次战斗前的80% (去尾取整)
 	}
+	void showInfo() {
+		cout << category << '(' << force << ')';
+	}
 };
 
 class Bomb: public Weapon {
 public:
 	Bomb() :
 			Weapon(1, BOMB) {
+	}
+	void showInfo() {
+		cout << category;
 	}
 };
 
@@ -90,13 +102,16 @@ public:
 	void afterBattle() {
 		useTimes--;
 	}
+	void showInfo() {
+		cout << category << '(' << useTimes << ')';
+	}
 };
 
-Weapon * createWeapon(int num) {
+Weapon * createWeapon(int num, int ownerForce) {
 	Weapon * weapon;
 	switch (num % 3) {
 	case 0:
-		weapon = new Sword();
+		weapon = new Sword(ownerForce / 5);
 		break;
 	case 1:
 		weapon = new Bomb();
@@ -116,11 +131,12 @@ protected:
 	int force;
 	string hqName; //武士所属的司令部
 	int cityId; //武士当前所处的城市的id，移动时更新
+	int enemyHQCityId;
 public:
 	Warrior(string category, int num, int elements, int force, string hqName,
-			int cityId) :
+			int cityId, int enemyHQCityId) :
 			category(category), num(num), elements(elements), force(force), hqName(
-					hqName), cityId(cityId) {
+					hqName), cityId(cityId), enemyHQCityId(enemyHQCityId) {
 		cout << this->category << ' ' << this->num << " born" << endl;
 	}
 //	Warrior() :
@@ -135,7 +151,7 @@ public:
 		this->hqName = hqName;
 		this->cityId = cityId;
 	}
-	~Warrior() {
+	virtual ~Warrior() {
 		if (debug) {
 			cout << "test ~Warrior() " << hqName << " num:" << num << endl;
 		}
@@ -149,6 +165,20 @@ public:
 	int getCityId() {
 		return cityId;
 	}
+	virtual void march() {
+		(hqName == RED_HQ) ? cityId++ : cityId--; //前进到下一城市
+		if (cityId == enemyHQCityId) { //是否到达敌方司令部
+			cout << hqName << ' ' << category << ' ' << num << " reached "
+					<< (hqName == RED_HQ ? "blue" : "red")
+					<< " headquarter with ";
+		} else {
+			cout << hqName << ' ' << category << ' ' << num
+					<< " marched to city " << cityId << " with ";
+		}
+	}
+	virtual void showWeapons() {
+		cout << hqName << ' ' << category << ' ' << num << " has ";
+	}
 };
 
 class Dragon: public Warrior {
@@ -156,47 +186,116 @@ class Dragon: public Warrior {
 	float morale;
 public:
 	Dragon(int num, int elements, float morale, int force, string hqName,
-			int cityId) :
-			Warrior(DRAGON, num, elements, force, hqName, cityId), morale(
-					morale) {
-		weapon = createWeapon(num % 3);
-		if (weapon->getCategory() == SWORD) {
-			((Sword *) weapon)->setForce(force / 5);
-		}
-		cout << "Its morale is " << fixed << setprecision(2) << morale << endl;
+			int cityId, int enemyHQCityId) :
+			Warrior(DRAGON, num, elements, force, hqName, cityId,
+					enemyHQCityId), morale(morale) {
+		weapon = createWeapon(num % 3, force);
+		cout << "Its morale is " << fixed << setprecision(2) << this->morale
+				<< endl;
 	}
 	~Dragon() {
 		if (weapon) {
 			delete weapon;
 		}
 	}
-	void showInfo() {
-		cout << "It has a " << weapon << endl;
+	void march() {
+		Warrior::march();
+		cout << elements << " elements and force " << force << endl;
+	}
+	void showWeapons() {
+		Warrior::showWeapons();
+		if (weapon) {
+			weapon->showInfo();
+		} else {
+			cout << "no weapon";
+		}
+		cout << endl;
 	}
 };
 
 class Ninja: public Warrior {
-	Weapon weapons[2];
+	Weapon * weapons[2];
 public:
-	Ninja(int num, int elements, int force, string hqName, int cityId) :
-			Warrior(NINJA, num, elements, force, hqName, cityId) {
-		weapons[0] = WEAPONS[num % 3];
-		weapons[1] = WEAPONS[(num + 1) % 3];
+	Ninja(int num, int elements, int force, string hqName, int cityId,
+			int enemyHQCityId) :
+			Warrior(NINJA, num, elements, force, hqName, cityId, enemyHQCityId) {
+		weapons[0] = createWeapon(num % 3, force);
+		weapons[1] = createWeapon((num + 1) % 3, force);
 	}
-	void showInfo() {
-		cout << "It has a " << weapons[0] << " and a " << weapons[1] << endl;
+	~Ninja() {
+		if (weapons[0]) {
+			delete weapons[0];
+			weapons[0] = NULL;
+		}
+		if (weapons[1]) {
+			delete weapons[1];
+			weapons[1] = NULL;
+		}
+	}
+	void march() {
+		Warrior::march();
+		cout << elements << " elements and force " << force << endl;
+	}
+	void showWeapons() {
+		Warrior::showWeapons();
+		bool flag = false;
+		int num = 2;
+		while (num >= 0) { //武器的输出顺序为arrow，bomb，sword。对应的编号为2，1，0
+			for (int i = 0; i < 2; i++) {
+				if (weapons[i] && weapons[i]->getNum() == num) {
+					if (flag) {
+						cout << ',';
+					}
+					weapons[i]->showInfo();
+					if (!flag) {
+						flag = true;
+					}
+				}
+			}
+		}
+		if (!flag) {
+			cout << "no weapon";
+		}
+		cout << endl;
 	}
 };
 
 class Iceman: public Warrior {
-	string weapon;
+	Weapon * weapon;
+	int marchedSteps = 0;
 public:
-	Iceman(int num, int elements, int force, string hqName, int cityId) :
-			Warrior(ICEMAN, num, elements, force, hqName, cityId) {
-		weapon = WEAPONS[num % 3];
+	Iceman(int num, int elements, int force, string hqName, int cityId,
+			int enemyHQCityId) :
+			Warrior(ICEMAN, num, elements, force, hqName, cityId, enemyHQCityId) {
+		weapon = createWeapon(num % 3, force);
 	}
-	void showInfo() {
-		cout << "It has a " << weapon << endl;
+	~Iceman() {
+		if (weapon) {
+			delete weapon;
+		}
+	}
+	void march() {
+		Warrior::march();
+		marchedSteps++;
+		if (marchedSteps == 2) {
+			if (elements <= 9) {
+				elements = 1;
+			} else {
+				elements -= 9;
+				force += 20;
+			}
+			marchedSteps = 0;
+		}
+		cout << elements << " elements and force " << force << endl;
+	}
+	void showWeapons() {
+		Warrior::showWeapons();
+		if (weapon) {
+			weapon->showInfo();
+		} else {
+			cout << "no weapon";
+		}
+		cout << endl;
 	}
 };
 
@@ -204,8 +303,8 @@ class Lion: public Warrior {
 	int loyalty;
 public:
 	Lion(int num, int elements, int loyalty, int force, string hqName,
-			int cityId) :
-			Warrior(LION, num, elements, force, hqName, cityId) {
+			int cityId, int enemyHQCityId) :
+			Warrior(LION, num, elements, force, hqName, cityId, enemyHQCityId) {
 		this->loyalty = loyalty;
 		cout << "It's loyalty is " << loyalty << endl;
 	}
@@ -218,12 +317,57 @@ public:
 	int getLoyalty() {
 		return loyalty;
 	}
+	void march() {
+		Warrior::march();
+		cout << elements << " elements and force " << force << endl;
+	}
+	void showWeapons() { //has no weapon
+	}
 };
 
 class Wolf: public Warrior {
+	Weapon * weapons[3];
 public:
-	Wolf(int num, int elements, int force, string hqName, int cityId) :
-			Warrior(WOLF, num, elements, force, hqName, cityId) {
+	Wolf(int num, int elements, int force, string hqName, int cityId,
+			int enemyHQCityId) :
+			Warrior(WOLF, num, elements, force, hqName, cityId, enemyHQCityId) {
+		for (int i = 0; i < 3; i++) {
+			weapons[i] = NULL;
+		}
+	}
+	~Wolf() {
+		for (int i = 0; i < 3; i++) {
+			if (weapons[i]) {
+				delete weapons[i];
+				weapons[i] = NULL;
+			}
+		}
+	}
+	void march() {
+		Warrior::march();
+		cout << elements << " elements and force " << force << endl;
+	}
+	void showWeapons() {
+		Warrior::showWeapons();
+		bool flag = false;
+		int num = 2;
+		while (num >= 0) { //武器的输出顺序为arrow，bomb，sword。对应的编号为2，1，0
+			for (int i = 0; i < 3; i++) {
+				if (weapons[i] && weapons[i]->getNum() == num) {
+					if (flag) {
+						cout << ',';
+					}
+					weapons[i]->showInfo();
+					if (!flag) {
+						flag = true;
+					}
+				}
+			}
+		}
+		if (!flag) {
+			cout << "no weapon";
+		}
+		cout << endl;
 	}
 };
 
@@ -283,21 +427,18 @@ class Headquarter {
 	string name;
 	int totalElements;
 	int cityId;
+	int enemyHQCityId;
 	Warrior ** warriors;
 //	Warrior * warriors[100];
 
 	int warriorId;
 	int index;
-	const string *categoryOrder;
-	const int *elementOrder;
-	const int *forceOrder;
+	const int *order;
 public:
-	Headquarter(string name, int totalElements, int cityId,
-			const string *categoryOrder, const int *elementOrder,
-			const int * forceOrder) :
-			name(name), totalElements(totalElements), cityId(cityId), categoryOrder(
-					categoryOrder), elementOrder(elementOrder), forceOrder(
-					forceOrder) {
+	Headquarter(string name, int totalElements, int cityId, int enemyHQCityId,
+			const int *order) :
+			name(name), totalElements(totalElements), cityId(cityId), enemyHQCityId(
+					enemyHQCityId), order(order) {
 		warriors = new Warrior *[100];
 		for (int i = 0; i < 100; i++) {
 			warriors[i] = NULL;
@@ -336,24 +477,28 @@ private:
 		totalElements -= element;
 		if (category == DRAGON) {
 			warriors[id - 1] = new Dragon(id, element,
-					totalElements / (element * 1.0f), force, name, cityId);
+					totalElements / (element * 1.0f), force, name, cityId,
+					enemyHQCityId);
 		} else if (category == NINJA) {
-			warriors[id - 1] = new Ninja(id, element, force, name, cityId);
+			warriors[id - 1] = new Ninja(id, element, force, name, cityId,
+					enemyHQCityId);
 		} else if (category == ICEMAN) {
-			warriors[id - 1] = new Iceman(id, element, force, name, cityId);
+			warriors[id - 1] = new Iceman(id, element, force, name, cityId,
+					enemyHQCityId);
 		} else if (category == LION) {
 			warriors[id - 1] = new Lion(id, element, totalElements, force, name,
-					cityId);
+					cityId, enemyHQCityId);
 		} else {
-			warriors[id - 1] = new Wolf(id, element, force, name, cityId);
+			warriors[id - 1] = new Wolf(id, element, force, name, cityId,
+					enemyHQCityId);
 		}
 		return true;
 	}
 public:
 	bool createWarriorsByOrder(int time) {
 		//按顺序制造
-		if (createWarrior(time, categoryOrder[index], warriorId,
-				elementOrder[index], forceOrder[index])) {
+		if (createWarrior(time, Categorys[order[index]], warriorId,
+				Elements[order[index]], Forces[order[index]])) {
 			index = index == 4 ? 0 : index + 1; //从0到4循环
 			warriorId++;
 			return true;
@@ -362,16 +507,17 @@ public:
 	}
 	void lionRunAway(int time) {
 		//已经到达敌人司令部的lion不会逃跑。Lion在己方司令部可能逃跑
-		int enemyHQId = -1;
-		if (name == RED_HQ) {
-			enemyHQId = BLUE_HQ_CITY_ID;
-		} else {
-			enemyHQId = RED_HQ_CITY_ID;
-		}
+//		int enemyHQId = -1;
+//		if (name == RED_HQ) {
+//			enemyHQId = BLUE_HQ_CITY_ID;
+//		} else {
+//			enemyHQId = RED_HQ_CITY_ID;
+//		}
 		for (int i = 0; i < warriorId; i++) {
 			if (warriors[i] && warriors[i]->getCategory() == LION) {
 				Lion * lion = (Lion *) warriors[i];
-				if (lion->getCityId() != enemyHQId && lion->getLoyalty() <= 0) {
+				if (lion->getCityId() != enemyHQCityId
+						&& lion->getLoyalty() <= 0) {
 					showFormatTime(time);
 					lion->runAway();
 					//Lion逃跑后消失
@@ -381,12 +527,27 @@ public:
 			}
 		}
 	}
-	void showWeapons() {
+	void warriorsMarch(int time) {
+		for (int i = 0; i < warriorId; i++) {
+			if (warriors[i]) {
+				showFormatTime(time);
+				warriors[i]->march();
+			}
+		}
 
 	}
 	void showTotalElements() {
 		cout << totalElements << " elements in " << name << " headquarter"
 				<< endl;
+	}
+	void showWeapons(int time) { //按从西向东的顺序
+		for (int i = warriorId - 1; i >= 0; i--) {
+			if (warriors[i] && warriors[i]->getCategory() != LION) { //lion没有武器
+				showFormatTime(time);
+				warriors[i]->showWeapons();
+			}
+		}
+
 	}
 };
 
@@ -409,36 +570,34 @@ int main() {
 	cin >> t;
 
 	int M, N, K, T;
-	int E_dragon, E_ninja, E_iceman, E_lion, E_wolf;
-	int F_dragon, F_ninja, F_iceman, F_lion, F_wolf;
 	//测试数据有t组
 	for (int i = 1; i <= t; i++) {
 		cin >> M >> N >> R >> K >> T;
-		cin >> E_dragon >> E_ninja >> E_iceman >> E_lion >> E_wolf;
-		cin >> F_dragon >> F_ninja >> F_iceman >> F_lion >> F_wolf;
-
-		//红方司令部按照iceman、lion、wolf、ninja、dragon的顺序循环制造武士。
-		const string redCategory[5] = { ICEMAN, LION, WOLF, NINJA, DRAGON };
-		const int redElement[5] =
-				{ E_iceman, E_lion, E_wolf, E_ninja, E_dragon };
-		const int redForce[5] = { F_iceman, F_lion, F_wolf, F_ninja, F_dragon };
-
-		//蓝方司令部按照lion、dragon、ninja、iceman、wolf的顺序循环制造武士。
-		const string blueCategory[5] = { LION, DRAGON, NINJA, ICEMAN, WOLF };
-		const int blueElement[5] =
-				{ E_lion, E_dragon, E_ninja, E_iceman, E_wolf };
-		const int blueForce[5] = { F_lion, F_dragon, F_ninja, F_iceman, F_wolf };
+		for (int i = 0; i < 5; i++) {
+			cin >> Elements[i];
+		}
+		for (int i = 0; i < 5; i++) {
+			cin >> Forces[i];
+		}
 
 		City *citys = new City[N];
 		initCitys(citys, N);
 		cout << "citys:" << citys << endl;
 
+		//红方司令部按照iceman、lion、wolf、ninja、dragon的顺序循环制造武士。
+		const int redOrder[5] = { INDEX_ICEMAN, INDEX_LION, INDEX_WOLF,
+				INDEX_NINJA, INDEX_DRAGON };
+
+		//蓝方司令部按照lion、dragon、ninja、iceman、wolf的顺序循环制造武士。
+		const int blueOrder[5] = { INDEX_LION, INDEX_DRAGON, INDEX_NINJA,
+				INDEX_ICEMAN, INDEX_WOLF };
+
 		RED_HQ_CITY_ID = 0;
 		BLUE_HQ_CITY_ID = N + 1;
-		Headquarter redHeadquarter(RED_HQ, M, RED_HQ_CITY_ID, redCategory,
-				redElement, redForce);
-		Headquarter blueHeadquarter(BLUE_HQ, M, BLUE_HQ_CITY_ID, blueCategory,
-				blueElement, blueForce);
+		Headquarter redHeadquarter(RED_HQ, M, RED_HQ_CITY_ID, BLUE_HQ_CITY_ID,
+				redOrder);
+		Headquarter blueHeadquarter(BLUE_HQ, M, BLUE_HQ_CITY_ID, RED_HQ_CITY_ID,
+				blueOrder);
 
 		cout << "Case:" << i << endl;
 		for (int time = 0; time <= T; time++) {
@@ -455,6 +614,8 @@ int main() {
 				blueHeadquarter.lionRunAway(time);
 				break;
 			case 10: //武士前进到某一城市/抵达敌军司令部/司令部被占领
+				redHeadquarter.warriorsMarch(time);
+				blueHeadquarter.warriorsMarch(time);
 				break;
 			case 20: //每个城市产出10个生命元
 				createElements(citys, N);
@@ -474,7 +635,8 @@ int main() {
 				blueHeadquarter.showTotalElements();
 				break;
 			case 55: //每个武士报告其拥有的武器情况
-
+				redHeadquarter.showWeapons(time);
+				blueHeadquarter.showWeapons(time);
 				break;
 			default:
 				break;
