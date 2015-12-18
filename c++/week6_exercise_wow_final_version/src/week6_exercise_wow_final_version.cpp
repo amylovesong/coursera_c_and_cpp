@@ -52,6 +52,9 @@ public:
 		return category;
 	}
 	virtual void showInfo()=0;
+	bool isArrow() {
+		return category == ARROW;
+	}
 };
 
 class Sword: public Weapon {
@@ -100,7 +103,7 @@ public:
 	bool canUse() { //使用3次后即被耗尽
 		return useTimes > 0;
 	}
-	void afterBattle() {
+	void use() {
 		useTimes--;
 	}
 	void showInfo() {
@@ -130,6 +133,8 @@ public:
 	virtual bool march();
 	void earnElements(int elements);
 	virtual void showWeapons();
+	virtual bool hasArrow();
+	virtual void useArrow();
 };
 
 class Headquarter {
@@ -188,6 +193,8 @@ public:
 	~Dragon();
 	bool march();
 	void showWeapons();
+	bool hasArrow();
+	void useArrow();
 };
 
 class Ninja: public Warrior {
@@ -198,6 +205,7 @@ public:
 	~Ninja();
 	bool march();
 	void showWeapons();
+	bool hasArrow();
 };
 
 class Iceman: public Warrior {
@@ -209,6 +217,7 @@ public:
 	~Iceman();
 	bool march();
 	void showWeapons();
+	bool hasArrow();
 };
 
 class Lion: public Warrior {
@@ -220,6 +229,7 @@ public:
 	int getLoyalty();
 	bool march();
 	void showWeapons();
+	bool hasArrow();
 };
 
 class Wolf: public Warrior {
@@ -230,6 +240,7 @@ public:
 	~Wolf();
 	bool march();
 	void showWeapons();
+	bool hasArrow();
 };
 
 void showFormatTime(int time) {
@@ -253,14 +264,14 @@ Weapon * createWeapon(int num, int ownerForce) {
 	return weapon;
 }
 
-void initCitys(City * citys[], int amount) {
+void initCitys(int amount) {
 	for (int i = 0; i < MAX_AMOUNT_CITIES; i++) {
-		if (citys[i]) {
-			delete citys[i];
-			citys[i] = NULL;
+		if (cities[i]) {
+			delete cities[i];
+			cities[i] = NULL;
 		}
 		if (i < amount) {
-			citys[i] = new City(i + 1);
+			cities[i] = new City(i + 1);
 		}
 	}
 }
@@ -286,9 +297,34 @@ void warriorsGetElementsFromCity(int time) {
 	}
 }
 
-void createElements(City * citys[], int amount) {
+void cityCreateElements(int amount) {
 	for (int i = 0; i < amount; i++) {
-		(*citys[i]).createElements();
+		(*cities[i]).createElements();
+	}
+}
+
+void warriorsUseArrow(int amount) {
+	for (int c = 0; c < amount; c++) {
+		if (cities[c]) {
+			City * curCity = cities[c];
+			City * nextCity = NULL;
+			//当前城市有红武士
+			if (curCity->getRedWarrior() && c < amount - 1) {
+				nextCity = cities[c + 1];
+				if (nextCity->getBlueWarrior()) { //下一个城市有蓝武士
+					//放箭
+
+				}
+			}
+			//当前城市有蓝武士
+			if (curCity->getBlueWarrior() && c > 0) {
+				nextCity = cities[c - 1];
+				if (nextCity->getRedWarrior()) { //下一个城市有红武士
+					//放箭
+
+				}
+			}
+		}
 	}
 }
 
@@ -437,6 +473,19 @@ void Dragon::showWeapons() {
 		cout << "no weapon";
 	}
 	cout << endl;
+}
+bool Dragon::hasArrow() {
+	return weapon && weapon->isArrow();
+}
+void Dragon::useArrow() {
+	if (hasArrow()) {
+		Arrow * arrow = (Arrow *) weapon;
+		arrow->use();
+		if(!arrow->canUse()){
+			delete weapon;
+			weapon = NULL;
+		}
+	}
 }
 
 Ninja::Ninja(int num, int elements, int force, string hqName, int cityId,
@@ -651,12 +700,6 @@ bool Headquarter::createWarriorsByOrder(int time) {
 }
 void Headquarter::lionRunAway(int time) {
 	//已经到达敌人司令部的lion不会逃跑。Lion在己方司令部可能逃跑
-//		int enemyHQId = -1;
-//		if (name == RED_HQ) {
-//			enemyHQId = BLUE_HQ_CITY_ID;
-//		} else {
-//			enemyHQId = RED_HQ_CITY_ID;
-//		}
 	for (int i = 0; i < warriorId; i++) {
 		if (warriors[i] && warriors[i]->getCategory() == LION) {
 			Lion * lion = (Lion *) warriors[i];
@@ -732,7 +775,7 @@ int main() {
 			cin >> Forces[f];
 		}
 
-		initCitys(cities, N);
+		initCitys(N);
 		cout << "citys:" << cities << endl;
 
 		//红方司令部按照iceman、lion、wolf、ninja、dragon的顺序循环制造武士。
@@ -772,12 +815,13 @@ int main() {
 				}
 				break;
 			case 20: //每个城市产出10个生命元
-				createElements(cities, N);
+				cityCreateElements(N);
 				break;
 			case 30: //武士取走所在城市的生命元并送给司令部
 				warriorsGetElementsFromCity(time);
 				break;
 			case 35: //武士放箭
+				warriorsUseArrow(N);
 				break;
 			case 38: //武士使用bomb
 				break;
