@@ -17,6 +17,12 @@ void initArray(short * array, int length) {
 	}
 }
 
+void initArray(int * array, int length) {
+	for (int i = 0; i < length; i++) {
+		array[i] = 0;
+	}
+}
+
 void showArray(const short * array, int length) {
 	if (debug) {
 		cout << "test showArray length:" << length << " content:";
@@ -59,6 +65,9 @@ public:
 	friend void simplifyArray(BigInt & dest, const short * rNum, int rLength);
 	friend bool compare(const BigInt & a, const BigInt & b);
 	friend BigInt & mMinus(const BigInt & big, const BigInt & small);
+	friend int * convertBigInt2Array(int * array, const BigInt & b);
+	friend void convertArray2BigInt(BigInt & dest, const int * array,
+			int length);
 };
 
 BigInt::BigInt(const char * n, bool flagPositive) :
@@ -177,47 +186,122 @@ void simplifyArray(BigInt & dest, const short * rNum, int rLength) {
 	}
 }
 
+const int D = 3;
+const int BASE = 1000;
 BigInt & BigInt::operator*(const BigInt & b) {
 	if (debug) {
 		cout << "test operator*() *this:" << *this << " b:" << b << endl;
 	}
-	BigInt result("0");
-	int tmpLength = b.length + 1;
-	short * tmp = new short[tmpLength];
-	BigInt tmpDest;
-	tmpDest.length = b.length + 1 + length;
-	tmpDest.num = new short[b.length + 1 + length];
+	int aLength = (length % D == 0) ? length / D : (length / D) + 1;
+	int bLength = (b.length % D == 0) ? b.length / D : (b.length / D) + 1;
+	if (debug) {
+		cout << "test aLenght:" << aLength << " bLength:" << bLength << endl;
+	}
+	int *tmpA = new int[aLength], *tmpB = new int[bLength];
+	initArray(tmpA, aLength);
+	initArray(tmpB, bLength);
+	convertBigInt2Array(tmpA, *this);
+	convertBigInt2Array(tmpB, b);
+	if (debug) {
+		cout << "tmpA[0]:" << tmpA[0] << endl;
+		cout << "tmpB[0]:" << tmpB[0] << endl;
+	}
+	int resultLength = aLength + bLength;
+	int *tmpResult = new int[resultLength];
+	int *tmp = new int[aLength];
+	int indexTmp = 0;
+	int *result = new int[resultLength];
+	initArray(result, resultLength);
+	for (int i = 0; i < bLength; i++) {
+		indexTmp = 0;
+		initArray(tmpResult, resultLength);
+		initArray(tmp, aLength);
+		if (debug) {
+			cout << "test i:" << i << endl;
+		}
+		for (int j = 0; j < aLength; j++) {
+			tmp[indexTmp] = tmpB[i] * tmpA[j];
+			if (debug) {
+				cout << "test tmp[" << indexTmp << "]:" << tmp[indexTmp]
+						<< endl;
+			}
+			indexTmp++;
+		}
+		memcpy(tmpResult + i, tmp, indexTmp * sizeof(int));
+		if (debug) {
+			cout << "test tmpResult[" << indexTmp - 1 << "]:"
+					<< tmpResult[indexTmp - 1] << endl;
+		}
+		for (int j = 0; j < indexTmp + i; j++) {
+			result[j] += tmpResult[j];
+		}
+	}
+	if (debug) {
+		for (int i = 0; i < resultLength; i++) {
+			cout << "test result:" << endl;
+			cout << result[i] << endl;
+		}
+	}
+	int carry = 0;
+	for (int i = 0; i < resultLength; i++) {
+		result[i] = result[i] + carry;
+		carry = result[i] / BASE;
+		result[i] = result[i] % BASE;
+		if (debug) {
+			cout << result[i] << endl;
+		}
+	}
+
+	static BigInt finalResult;
+	convertArray2BigInt(finalResult, result, resultLength);
+
+	delete tmpA;
+	delete tmpB;
+	delete tmpResult;
+	delete tmp;
+	delete result;
+
+	return finalResult;
+}
+
+int * convertBigInt2Array(int * array, const BigInt & b) {
+	int index = 0;
+	for (int i = 0; i < b.length; i++) {
+		int tmp = b.num[i];
+		for (int j = 0; j < i % D; j++) {
+			tmp = tmp * 10;
+		}
+		array[index] = array[index] + tmp;
+		if (i % D == D - 1) {
+			index++;
+		}
+	}
+	return array;
+}
+void convertArray2BigInt(BigInt & dest, const int * array, int length) {
+	int finalResultLength = length * D;
+	short * finalResultArray = new short[finalResultLength];
+	initArray(finalResultArray, finalResultLength);
+	int tmp = 0;
 	for (int i = 0; i < length; i++) {
-		if (num[i] == 0) {
+		tmp = array[i];
+		if (debug) {
+			cout << "test convertArray2BigInt tmp:" << tmp << endl;
+		}
+		if (tmp == 0) {
 			continue;
 		}
-		//initialize array
-		initArray(tmp, b.length + 1);
-		initArray(tmpDest.num, tmpDest.length);
-
-		int carry = 0, product = 0;
-		for (int j = 0; j < b.length; j++) {
-			product = num[i] * b.num[j] + carry;
-			carry = product / 10;
-			tmp[j] = product % 10;
+		for (int j = 0; j < D; j++) {
+			finalResultArray[j + i * D] = tmp % 10;
+			tmp = tmp / 10;
+			if (debug) {
+				cout << "test convertArray2BigInt finalResultArray:"
+						<< finalResultArray[j + i * D] << endl;
+			}
 		}
-		if (carry > 0) { //最高位的进位
-			tmp[b.length] = carry;
-		}
-		//向右移位，低位补0
-		memcpy(tmpDest.num + i, tmp, tmpLength * sizeof(short));
-		result = result + tmpDest;
 	}
-	delete[] tmp;
-	if (debug) {
-		cout << "test operator*() result:" << result << endl;
-	}
-	static BigInt finalResult;
-	simplifyArray(finalResult, result.num, result.length);
-	if (debug) {
-		cout << "test operator*() finalResult:" << finalResult << endl;
-	}
-	return finalResult;
+	dest.length = finalResultLength;
+	dest.num = finalResultArray;
 }
 
 bool operator==(const BigInt & a, const BigInt & b) {
