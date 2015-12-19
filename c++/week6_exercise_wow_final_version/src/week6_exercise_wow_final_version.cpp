@@ -127,14 +127,17 @@ public:
 //	Warrior();
 	virtual ~Warrior();
 	string getCategory();
-	string gethqName();
+	int getNum();
+//	string gethqName();
 	int getCityId();
 	bool hasReachedEnemyHQ();
 	virtual bool march();
 	void earnElements(int elements);
 	virtual void showWeapons();
-	virtual bool hasArrow();
-	virtual void useArrow();
+	virtual bool useArrow()=0; // return true if the warrior has a arrow and use it
+	int hitByArrow();
+//	bool isAlive();
+	bool hasDead();
 };
 
 class Headquarter {
@@ -160,6 +163,7 @@ public:
 	void gainElements(int elements);
 	void showTotalElements(int time);
 	void showWeapons(int time);
+	void removeDeadWarrior(int num);
 };
 
 class City {
@@ -193,8 +197,7 @@ public:
 	~Dragon();
 	bool march();
 	void showWeapons();
-	bool hasArrow();
-	void useArrow();
+	bool useArrow();
 };
 
 class Ninja: public Warrior {
@@ -205,7 +208,7 @@ public:
 	~Ninja();
 	bool march();
 	void showWeapons();
-	bool hasArrow();
+	bool useArrow();
 };
 
 class Iceman: public Warrior {
@@ -217,7 +220,7 @@ public:
 	~Iceman();
 	bool march();
 	void showWeapons();
-	bool hasArrow();
+	bool useArrow();
 };
 
 class Lion: public Warrior {
@@ -229,7 +232,7 @@ public:
 	int getLoyalty();
 	bool march();
 	void showWeapons();
-	bool hasArrow();
+	bool useArrow();
 };
 
 class Wolf: public Warrior {
@@ -240,7 +243,7 @@ public:
 	~Wolf();
 	bool march();
 	void showWeapons();
-	bool hasArrow();
+	bool useArrow();
 };
 
 void showFormatTime(int time) {
@@ -313,7 +316,9 @@ void warriorsUseArrow(int amount) {
 				nextCity = cities[c + 1];
 				if (nextCity->getBlueWarrior()) { //下一个城市有蓝武士
 					//放箭
-
+					if (curCity->getRedWarrior()->useArrow()) {
+						nextCity->getBlueWarrior()->hitByArrow();
+					}
 				}
 			}
 			//当前城市有蓝武士
@@ -321,8 +326,27 @@ void warriorsUseArrow(int amount) {
 				nextCity = cities[c - 1];
 				if (nextCity->getRedWarrior()) { //下一个城市有红武士
 					//放箭
-
+					if (curCity->getBlueWarrior()->useArrow()) {
+						nextCity->getRedWarrior()->hitByArrow();
+					}
 				}
+			}
+		}
+	}
+	//检查是否有武士被杀死
+	for (int c = 0; c < amount; c++) {
+		if (cities[c]) {
+			Warrior * red = cities[c]->getRedWarrior();
+			Warrior * blue = cities[c]->getBlueWarrior();
+			if (red && red->hasDead()) {
+				//从司令部的记录中移除已被杀死的武士
+				redHeadquarter->removeDeadWarrior(red->getNum());
+				//将城市中指向武士的指针置空
+				cities[c]->setRedWarrior(NULL);
+			}
+			if (blue && blue->hasDead()) {
+				blueHeadquarter->removeDeadWarrior(blue->getNum());
+				cities[c]->setBlueWarrior(NULL);
 			}
 		}
 	}
@@ -405,9 +429,12 @@ Warrior::~Warrior() {
 string Warrior::getCategory() {
 	return category;
 }
-string Warrior::gethqName() {
-	return hqName;
+int Warrior::getNum() {
+	return num;
 }
+//string Warrior::gethqName() {
+//	return hqName;
+//}
 int Warrior::getCityId() {
 	return cityId;
 }
@@ -446,6 +473,12 @@ void Warrior::earnElements(int elements) {
 void Warrior::showWeapons() {
 	cout << hqName << ' ' << category << ' ' << num << " has ";
 }
+int Warrior::hitByArrow() {
+	return elements -= R;
+}
+bool Warrior::hasDead() {
+	return elements <= 0;
+}
 
 Dragon::Dragon(int num, int elements, float morale, int force, string hqName,
 		int cityId, int enemyHQCityId) :
@@ -474,18 +507,17 @@ void Dragon::showWeapons() {
 	}
 	cout << endl;
 }
-bool Dragon::hasArrow() {
-	return weapon && weapon->isArrow();
-}
-void Dragon::useArrow() {
-	if (hasArrow()) {
+bool Dragon::useArrow() {
+	if (weapon && weapon->isArrow()) {
 		Arrow * arrow = (Arrow *) weapon;
 		arrow->use();
-		if(!arrow->canUse()){
+		if (!arrow->canUse()) {
 			delete weapon;
 			weapon = NULL;
 		}
+		return true;
 	}
+	return false;
 }
 
 Ninja::Ninja(int num, int elements, int force, string hqName, int cityId,
@@ -531,6 +563,24 @@ void Ninja::showWeapons() {
 	}
 	cout << endl;
 }
+bool Ninja::useArrow() {
+	int arrowIndex = -1;
+	for (int w = 0; w < 2; w++) {
+		if (weapons[w] && weapons[w]->isArrow()) {
+			arrowIndex = w;
+		}
+	}
+	if (arrowIndex >= 0) {
+		Arrow * arrow = (Arrow *) weapons[arrowIndex];
+		arrow->use();
+		if (!arrow->canUse()) {
+			delete arrow;
+			weapons[arrowIndex] = NULL;
+		}
+		return true;
+	}
+	return false;
+}
 
 Iceman::Iceman(int num, int elements, int force, string hqName, int cityId,
 		int enemyHQCityId) :
@@ -567,6 +617,18 @@ void Iceman::showWeapons() {
 	}
 	cout << endl;
 }
+bool Iceman::useArrow() {
+	if (weapon && weapon->isArrow()) {
+		Arrow * arrow = (Arrow *) weapon;
+		arrow->use();
+		if (!arrow->canUse()) {
+			delete weapon;
+			weapon = NULL;
+		}
+		return true;
+	}
+	return false;
+}
 
 Lion::Lion(int num, int elements, int loyalty, int force, string hqName,
 		int cityId, int enemyHQCityId) :
@@ -588,6 +650,9 @@ bool Lion::march() {
 void Lion::showWeapons() { //has no weapon
 	Warrior::showWeapons();
 	cout << "no weapon" << endl;
+}
+bool Lion::useArrow() {
+	return false;
 }
 
 Wolf::Wolf(int num, int elements, int force, string hqName, int cityId,
@@ -631,6 +696,24 @@ void Wolf::showWeapons() {
 		cout << "no weapon";
 	}
 	cout << endl;
+}
+bool Wolf::useArrow() {
+	int arrowIndex = -1;
+	for (int w = 0; w < 3; w++) {
+		if (weapons[w] && weapons[w]->isArrow()) {
+			arrowIndex = w;
+		}
+	}
+	if (arrowIndex >= 0) {
+		Arrow * arrow = (Arrow *) weapons[arrowIndex];
+		arrow->use();
+		if (!arrow->canUse()) {
+			delete arrow;
+			weapons[arrowIndex] = NULL;
+		}
+		return true;
+	}
+	return false;
 }
 
 Headquarter::Headquarter(string name, int totalElements, int cityId,
@@ -758,6 +841,12 @@ void Headquarter::showWeapons(int time) { //按从西向东的顺序
 		}
 	}
 }
+void Headquarter::removeDeadWarrior(int num) {
+	if (warriors[num - 1]) {
+		delete warriors[num - 1];
+		warriors[num - 1] = NULL;
+	}
+}
 
 int main() {
 	int t; //测试数据的组数
@@ -776,7 +865,7 @@ int main() {
 		}
 
 		initCitys(N);
-		cout << "citys:" << cities << endl;
+//		cout << "citys:" << cities << endl;
 
 		//红方司令部按照iceman、lion、wolf、ninja、dragon的顺序循环制造武士。
 		const int redOrder[5] = { INDEX_ICEMAN, INDEX_LION, INDEX_WOLF,
