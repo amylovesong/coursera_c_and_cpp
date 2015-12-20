@@ -176,7 +176,7 @@ class Headquarter {
 	int cityId;
 	int enemyHQCityId;
 	Warrior ** warriors;
-	int seqReachedEnemyHQ;
+	int seqReachedEnemyHQ;//武士到达敌方司令部的序号
 
 	int warriorId;
 	int index;
@@ -1431,12 +1431,6 @@ void showMarchInfo(int amount) { //从西向东
 			redHeadquarter->enemy[i]->showElementsAndForceInfo();
 		}
 	}
-	//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
-	if (redHeadquarter->seqReachedEnemyHQ == 2) {
-		showCurrentTime();
-		cout << ' ' << RED_HQ << " headquarter was taken";
-		return;
-	}
 	//中间的N个城市
 	for (int c = 0; c < amount; c++) {
 		if (cities[c]) {
@@ -1475,9 +1469,14 @@ void showMarchInfo(int amount) { //从西向东
 		}
 	}
 	//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
-	if (blueHeadquarter->seqReachedEnemyHQ == 2) {
+	if (redHeadquarter->seqReachedEnemyHQ == 2) {
 		showCurrentTime();
 		cout << ' ' << BLUE_HQ << " headquarter was taken";
+		return;
+	}
+	if (blueHeadquarter->seqReachedEnemyHQ == 2) {
+		showCurrentTime();
+		cout << ' ' << RED_HQ << " headquarter was taken";
 		return;
 	}
 }
