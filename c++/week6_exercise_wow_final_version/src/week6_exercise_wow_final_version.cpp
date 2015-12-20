@@ -158,7 +158,7 @@ public:
 	bool willDead(int damage);
 	void showBaseInfo();
 	void attack(Warrior * enemy, City * city);
-	void fightBack(Warrior * enemy, City * city);
+	virtual void fightBack(Warrior * enemy, City * city);
 	void beKilled(City * city);
 	void beAttacked(int damage);
 	void addElements(int elements);
@@ -196,6 +196,7 @@ public:
 	void showWeapons();
 	void removeDeadWarrior(int num);
 	void awardWarrior(Warrior * warrior);
+	void enemyReached(Warrior * enemy);
 	friend void showMarchInfo(int amount);
 };
 
@@ -257,7 +258,7 @@ public:
 	bool useBomb();
 	int getSwordForce();
 	int useSword();
-	void fightBack(Warrior * enemy);
+	void fightBack(Warrior * enemy, City * city);
 	Weapon ** getWeapons();
 };
 
@@ -771,6 +772,11 @@ bool Warrior::march() {
 	}
 	(hqName == RED_HQ) ? cityId++ : cityId--; //前进到下一城市
 	if (cityId == enemyHQCityId) { //到达敌方司令部
+		if (hqName == RED_HQ) {
+			blueHeadquarter->enemyReached(this);
+		} else if (hqName == BLUE_HQ) {
+			redHeadquarter->enemyReached(this);
+		}
 		reachedEnemyHQ = true;
 	} else { //武士在城市中移动
 		//更新城市中的武士的指针
@@ -1058,7 +1064,7 @@ int Ninja::useSword() {
 	}
 	return 0;
 }
-void Ninja::fightBack(Warrior * enemy) { //ninja 挨打了也从不反击敌人。
+void Ninja::fightBack(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
 
 }
 Weapon ** Ninja::getWeapons() {
@@ -1402,11 +1408,6 @@ bool Headquarter::warriorsMarch() {
 			}
 			if (warriors[i]->march()) { //武士抵达敌军司令部
 				seqReachedEnemyHQ++;
-				if (!enemy[0]) {
-					enemy[0] = warriors[i];
-				} else if (!enemy[1]) {
-					enemy[1] = warriors[i];
-				}
 			}
 			//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
 			if (seqReachedEnemyHQ == 2) {
@@ -1417,6 +1418,9 @@ bool Headquarter::warriorsMarch() {
 	return false;
 }
 void showMarchInfo(int amount) { //从西向东
+	if (debug) {
+		cout << "test showMarchInfo ";
+	}
 	//首先是红魔司令部
 	for (int i = 0; i < 2; i++) {
 		if (redHeadquarter->enemy[i] && !redHeadquarter->hasShownEnemyInfo[i]) {
@@ -1456,6 +1460,11 @@ void showMarchInfo(int amount) { //从西向东
 	}
 	//最后是蓝魔司令部
 	for (int i = 0; i < 2; i++) {
+		if (debug) {
+			cout << " blueHeadquarter enemy[" << i << "]:"
+					<< blueHeadquarter->enemy[i] << " hasShownEnemyInfo:"
+					<< blueHeadquarter->hasShownEnemyInfo[i] << endl;
+		}
 		if (blueHeadquarter->enemy[i]
 				&& !blueHeadquarter->hasShownEnemyInfo[i]) {
 			blueHeadquarter->hasShownEnemyInfo[i] = true;
@@ -1504,6 +1513,19 @@ void Headquarter::awardWarrior(Warrior * warrior) {
 	if (totalElements >= 8) {
 		warrior->addElements(8);
 		totalElements -= 8;
+	}
+}
+void Headquarter::enemyReached(Warrior * enemy) {
+	if (debug) {
+		cout << "test " << name << " enemyReached() enemy:";
+		enemy->showBaseInfo();
+		cout << endl;
+	}
+	for (int i = 0; i < 2; i++) {
+		if (!this->enemy[i]) {
+			this->enemy[i] = enemy;
+			break;
+		}
 	}
 }
 
