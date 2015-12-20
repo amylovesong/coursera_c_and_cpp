@@ -166,7 +166,7 @@ public:
 	bool isDragon();
 	bool isWolf();
 	virtual void getVictory(Warrior * enemy, City * city);
-	virtual void getFailure();
+	virtual void getFailure(City * city);
 	friend void showMarchInfo(int amount);
 };
 
@@ -241,7 +241,7 @@ public:
 	int getSwordForce();
 	int useSword();
 	void getVictory(Warrior * enemy, City * city);
-	void getFailure();
+	void getFailure(City * city);
 	void yell(City * city);
 	Weapon * getWeapon();
 };
@@ -289,7 +289,7 @@ public:
 	bool useBomb();
 	int getSwordForce();
 	int useSword();
-	void getFailure();
+	void getFailure(City * city);
 };
 
 class Wolf: public Warrior {
@@ -428,7 +428,7 @@ void warriorsUseArrow(int amount) {
 		if (cities[c]) {
 			Warrior * red = cities[c]->getRedWarrior();
 			Warrior * blue = cities[c]->getBlueWarrior();
-			if (!red && !blue) {//没有武士
+			if (!red && !blue) {					//没有武士
 				continue;
 			}
 			//由于在第40分钟的时候，有规则“如果敌人在5分钟前已经被飞来的arrow射死，那么仍然视为发生了一场战斗，而且存活者视为获得了战斗的胜利。”
@@ -466,62 +466,58 @@ void warriorsUseBomb(int amount) {
 				//该由红武士主动攻击
 				if (curCity->isRedAttack()) {
 					//蓝武士被攻击
-					if (blue->willDead(
-							red->getForce() + blue->getSwordForce())) {
-						perishTogether = blue->useBomb();
-						if (perishTogether) {
-							showCurrentTime();
-							blue->showBaseInfo();
-							cout << " used a bomb and killed ";
-							red->showBaseInfo();
-							cout << endl;
-						}
+					if (blue->willDead(red->getForce() + blue->getSwordForce())
+							&& blue->useBomb()) {
+						perishTogether = true;
+						showCurrentTime();
+						blue->showBaseInfo();
+						cout << " used a bomb and killed ";
+						red->showBaseInfo();
+						cout << endl;
+					} else if (red->willDead(
+							blue->getForce() / 2 + blue->getSwordForce())
+							&& red->useBomb()) {	//红武士被反击
+						perishTogether = true;
+						showCurrentTime();
+						red->showBaseInfo();
+						cout << " used a bomb and killed ";
+						blue->showBaseInfo();
+						cout << endl;
 					}
-					//红武士被反击
-					if (red->willDead(
-							blue->getForce() / 2 + blue->getSwordForce())) {
-						perishTogether = red->useBomb();
-						if (perishTogether) {
-							showCurrentTime();
-							red->showBaseInfo();
-							cout << " used a bomb and killed ";
-							blue->showBaseInfo();
-							cout << endl;
-						}
+				} else if (curCity->isBlueAttack()) {	//该由蓝武士主动攻击
+					//红武士被攻击
+					if (red->willDead(blue->getForce() + blue->getSwordForce())
+							&& red->useBomb()) {
+						perishTogether = true;
+						showCurrentTime();
+						red->showBaseInfo();
+						cout << " used a bomb and killed ";
+						blue->showBaseInfo();
+						cout << endl;
+					} else if (blue->willDead(
+							red->getForce() / 2 + blue->getSwordForce())
+							&& blue->useBomb()) {	//蓝武士被反击
+						perishTogether = true;
+						showCurrentTime();
+						blue->showBaseInfo();
+						cout << " used a bomb and killed ";
+						red->showBaseInfo();
+						cout << endl;
 					}
 				}
-				//该由蓝武士主动攻击
-				if (curCity->isBlueAttack()) {
-					//红武士被攻击
-					if (red->willDead(
-							blue->getForce() + blue->getSwordForce())) {
-						perishTogether = red->useBomb();
-						if (perishTogether) {
-							showCurrentTime();
-							red->showBaseInfo();
-							cout << " used a bomb and killed ";
-							blue->showBaseInfo();
-							cout << endl;
-						}
-					}
-					//蓝武士被反击
-					if (blue->willDead(
-							red->getForce() / 2 + blue->getSwordForce())) {
-						perishTogether = blue->useBomb();
-						if (perishTogether) {
-							showCurrentTime();
-							blue->showBaseInfo();
-							cout << " used a bomb and killed ";
-							red->showBaseInfo();
-							cout << endl;
-						}
-					}
+				if (debug) {
+					cout << "test perishTogether:" << perishTogether;
 				}
 				if (perishTogether) {					//同归于尽
 					redHeadquarter->removeDeadWarrior(red->getNum());
 					blueHeadquarter->removeDeadWarrior(blue->getNum());
 					curCity->setRedWarrior(NULL);
 					curCity->setBlueWarrior(NULL);
+				}
+				if (debug) {
+					cout << " in city " << curCity->getId() << " red:"
+							<< curCity->getRedWarrior() << " blue:"
+							<< curCity->getBlueWarrior() << endl;
 				}
 			}
 		}
@@ -540,15 +536,33 @@ void warriorsBattle(int amount) {
 			City * curCity = cities[c];
 			Warrior * red = curCity->getRedWarrior(), *blue =
 					curCity->getBlueWarrior();
+//			if (debug) {
+//				cout << " in city " << curCity->getId();
+//				if (red) {
+//					cout << ' ';
+//					red->showBaseInfo();
+////					cout << " hasDead:" << red->hasDead();
+//				} else {
+//					cout << " red is null ";
+//				}
+//				if (blue) {
+//					cout << ' ';
+//					blue->showBaseInfo();
+////					cout << " hasDead:" << red->hasDead();
+//				} else {
+//					cout << " blue is null ";
+//				}
+//				cout << endl;
+//			}
 			if (red && blue) {
 				//战斗前记录Lion的生命值
 				int redLionElements = 0, blueLionElements = 0;
 				if (red->hasDead() || blue->hasDead()) {//开始战斗前，如果有一个武士在5分钟前被射死，则存活的武士为胜利者
-					if(red->hasDead()){
+					if (red->hasDead()) {
 						blue->getVictory(red, curCity);
 						curCity->updateWinTimes(blue);
 					}
-					if(blue->hasDead()){
+					if (blue->hasDead()) {
 						red->getVictory(blue, curCity);
 						curCity->updateWinTimes(red);
 					}
@@ -581,8 +595,8 @@ void warriorsBattle(int amount) {
 										curCity);
 								curCity->updateWinTimes(beAttckedOne);
 							} else {	//平局
-								activeAttacker->getFailure();
-								beAttckedOne->getFailure();
+								activeAttacker->getFailure(curCity);
+								beAttckedOne->getFailure(curCity);
 								curCity->updateWinTimes(NULL);
 							}
 						}
@@ -704,8 +718,9 @@ bool City::isBlueWin() {
 }
 void City::updateFlag() {
 	if (debug) {
-		cout << "test updateFlag flag:" << flag << " redWinTimes:"
-				<< redWinTimes << " blueWinTimes:" << blueWinTimes << endl;
+		cout << "test updateFlag in city " << id << " flag:" << flag
+				<< " redWinTimes:" << redWinTimes << " blueWinTimes:"
+				<< blueWinTimes << endl;
 	}
 	if (flag != RED_FLAG && redWinTimes >= 2) {
 		setFlag(RED_FLAG);
@@ -857,7 +872,7 @@ bool Warrior::isWolf() {
 void Warrior::getVictory(Warrior * enemy, City * city) {
 
 }
-void Warrior::getFailure() {
+void Warrior::getFailure(City * city) {
 
 }
 
@@ -930,8 +945,13 @@ void Dragon::getVictory(Warrior * enemy, City * city) {
 		yell(city);
 	}
 }
-void Dragon::getFailure() {
+void Dragon::getFailure(City * city) {
 	morale -= 0.2;
+	if (hqName == RED_HQ && city->isRedAttack()) {
+		yell(city);
+	} else if (hqName == BLUE_HQ && city->isBlueAttack()) {
+		yell(city);
+	}
 }
 void Dragon::yell(City * city) {
 	if (morale > 0.8) {
@@ -1151,7 +1171,7 @@ int Lion::getSwordForce() {
 int Lion::useSword() {
 	return 0;
 }
-void Lion::getFailure() {
+void Lion::getFailure(City * city) {
 	loyalty -= K;
 }
 
