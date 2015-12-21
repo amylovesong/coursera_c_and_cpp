@@ -1,0 +1,498 @@
+Case 21:
+000:00 red iceman 1 born
+000:00 blue lion 1 born
+Its loyalty is 0
+000:05 blue lion 1 ran away
+000:10 red iceman 1 marched to city 1 with 100 elements and force 10
+000:30 red iceman 1 earned 10 elements for his headquarter
+000:50 10 elements in red headquarter
+000:50 0 elements in blue headquarter
+000:55 red iceman 1 has bomb
+001:10 red iceman 1 marched to city 2 with 91 elements and force 30
+001:30 red iceman 1 earned 20 elements for his headquarter
+001:50 30 elements in red headquarter
+001:50 0 elements in blue headquarter
+001:55 red iceman 1 has bomb
+002:10 red iceman 1 marched to city 3 with 91 elements and force 30
+002:30 red iceman 1 earned 30 elements for his headquarter
+002:50 60 elements in red headquarter
+002:50 0 elements in blue headquarter
+002:55 red iceman 1 has bomb
+003:10 red iceman 1 marched to city 4 with 82 elements and force 50
+003:30 red iceman 1 earned 40 elements for his headquarter
+003:50 100 elements in red headquarter
+003:50 0 elements in blue headquarter
+003:55 red iceman 1 has bomb
+004:00 red lion 2 born
+Its loyalty is 0
+004:05 red lion 2 ran away
+004:10 red iceman 1 marched to city 5 with 82 elements and force 50
+004:30 red iceman 1 earned 50 elements for his headquarter
+004:50 50 elements in red headquarter
+004:50 0 elements in blue headquarter
+004:55 red iceman 1 has bomb
+005:00 red wolf 3 born
+005:10 red wolf 3 marched to city 1 with 10 elements and force 1
+005:10 red iceman 1 marched to city 6 with 73 elements and force 70
+005:30 red wolf 3 earned 50 elements for his headquarter
+005:30 red iceman 1 earned 60 elements for his headquarter
+005:50 150 elements in red headquarter
+005:50 0 elements in blue headquarter
+005:55 red wolf 3 has no weapon
+005:55 red iceman 1 has bomb
+006:00 red ninja 4 born
+006:10 red ninja 4 marched to city 1 with 100 elements and force 100
+006:10 red wolf 3 marched to city 2 with 10 elements and force 1
+006:10 red iceman 1 marched to city 7 with 73 elements and force 70
+006:30 red ninja 4 earned 10 elements for his headquarter
+006:30 red wolf 3 earned 50 elements for his headquarter
+006:30 red iceman 1 earned 70 elements for his headquarter
+006:50 180 elements in red headquarter
+006:50 0 elements in blue headquarter
+006:55 red ninja 4 has arrow(3),bomb
+006:55 red wolf 3 has no weapon
+006:55 red iceman 1 has bomb
+007:00 red dragon 5 born
+Its morale is 0.80
+007:10 red dragon 5 marched to city 1 with 100 elements and force 10
+007:10 red ninja 4 marched to city 2 with 100 elements and force 100
+007:10 red wolf 3 marched to city 3 with 10 elements and force 1
+007:10 red iceman 1 marched to city 8 with 64 elements and force 90
+007:30 red dragon 5 earned 10 elements for his headquarter
+007:30 red ninja 4 earned 10 elements for his headquarter
+007:30 red wolf 3 earned 50 elements for his headquarter
+007:30 red iceman 1 earned 80 elements for his headquarter
+007:50 230 elements in red headquarter
+007:50 0 elements in blue headquarter
+007:55 red dragon 5 has arrow(3)
+007:55 red ninja 4 has arrow(3),bomb
+007:55 red wolf 3 has no weapon
+007:55 red iceman 1 has bomb
+008:00 red iceman 6 born
+008:10 red iceman 6 marched to city 1 with 100 elements and force 10
+008:10 red dragon 5 marched to city 2 with 100 elements and force 10
+008:10 red ninja 4 marched to city 3 with 100 elements and force 100
+008:10 red wolf 3 marched to city 4 with 10 elements and force 1
+008:10 red iceman 1 marched to city 9 with 64 elements and force 90
+008:30 red iceman 6 earned 10 elements for his headquarter
+008:30 red dragon 5 earned 10 elements for his headquarter
+008:30 red ninja 4 earned 10 elements for his headquarter
+008:30 red wolf 3 earned 50 elements for his headquarter
+008:30 red iceman 1 earned 90 elements for his headquarter
+008:50 300 elements in red headquarter
+008:50 0 elements in blue headquarter
+008:55 red iceman 6 has sword(2)
+008:55 red dragon 5 has arrow(3)
+008:55 red ninja 4 has arrow(3),bomb
+008:55 red wolf 3 has no weapon
+008:55 red iceman 1 has bomb
+009:00 red lion 7 born
+Its loyalty is 200
+009:10 red lion 7 marched to city 1 with 100 elements and force 100
+009:10 red iceman 6 marched to city 2 with 91 elements and force 30
+009:10 red dragon 5 marched to city 3 with 100 elements and force 10
+009:10 red ninja 4 marched to city 4 with 100 elements and force 100
+009:10 red wolf 3 marched to city 5 with 10 elements and force 1
+009:10 red iceman 1 marched to city 10 with 55 elements and force 110
+009:30 red lion 7 earned 10 elements for his headquarter
+009:30 red iceman 6 earned 10 elements for his headquarter
+009:30 red dragon 5 earned 10 elements for his headquarter
+009:30 red ninja 4 earned 10 elements for his headquarter
+009:30 red wolf 3 earned 50 elements for his headquarter
+009:30 red iceman 1 earned 100 elements for his headquarter
+009:50 390 elements in red headquarter
+009:50 0 elements in blue headquarter
+009:55 red lion 7 has no weapon
+009:55 red iceman 6 has sword(2)
+009:55 red dragon 5 has arrow(3)
+009:55 red ninja 4 has arrow(3),bomb
+009:55 red wolf 3 has no weapon
+009:55 red iceman 1 has bomb
+010:00 red wolf 8 born
+010:10 red wolf 8 marched to city 1 with 10 elements and force 1
+010:10 red lion 7 marched to city 2 with 100 elements and force 100
+010:10 red iceman 6 marched to city 3 with 91 elements and force 30
+010:10 red dragon 5 marched to city 4 with 100 elements and force 10
+010:10 red ninja 4 marched to city 5 with 100 elements and force 100
+010:10 red wolf 3 marched to city 6 with 10 elements and force 1
+010:10 red iceman 1 marched to city 11 with 55 elements and force 110
+010:30 red wolf 8 earned 10 elements for his headquarter
+010:30 red lion 7 earned 10 elements for his headquarter
+010:30 red iceman 6 earned 10 elements for his headquarter
+010:30 red dragon 5 earned 10 elements for his headquarter
+010:30 red ninja 4 earned 10 elements for his headquarter
+010:30 red wolf 3 earned 50 elements for his headquarter
+010:30 red iceman 1 earned 110 elements for his headquarter
+010:50 590 elements in red headquarter
+010:50 0 elements in blue headquarter
+010:55 red wolf 8 has no weapon
+010:55 red lion 7 has no weapon
+010:55 red iceman 6 has sword(2)
+010:55 red dragon 5 has arrow(3)
+010:55 red ninja 4 has arrow(3),bomb
+010:55 red wolf 3 has no weapon
+010:55 red iceman 1 has bomb
+011:00 red ninja 9 born
+011:10 red ninja 9 marched to city 1 with 100 elements and force 100
+011:10 red wolf 8 marched to city 2 with 10 elements and force 1
+011:10 red lion 7 marched to city 3 with 100 elements and force 100
+011:10 red iceman 6 marched to city 4 with 82 elements and force 50
+011:10 red dragon 5 marched to city 5 with 100 elements and force 10
+011:10 red ninja 4 marched to city 6 with 100 elements and force 100
+011:10 red wolf 3 marched to city 7 with 10 elements and force 1
+011:10 red iceman 1 marched to city 12 with 46 elements and force 130
+011:30 red ninja 9 earned 10 elements for his headquarter
+011:30 red wolf 8 earned 10 elements for his headquarter
+011:30 red lion 7 earned 10 elements for his headquarter
+011:30 red iceman 6 earned 10 elements for his headquarter
+011:30 red dragon 5 earned 10 elements for his headquarter
+011:30 red ninja 4 earned 10 elements for his headquarter
+011:30 red wolf 3 earned 50 elements for his headquarter
+011:30 red iceman 1 earned 120 elements for his headquarter
+011:50 720 elements in red headquarter
+011:50 0 elements in blue headquarter
+011:55 red ninja 9 has bomb,sword(20)
+011:55 red wolf 8 has no weapon
+011:55 red lion 7 has no weapon
+011:55 red iceman 6 has sword(2)
+011:55 red dragon 5 has arrow(3)
+011:55 red ninja 4 has arrow(3),bomb
+011:55 red wolf 3 has no weapon
+011:55 red iceman 1 has bomb
+012:00 red dragon 10 born
+Its morale is 6.20
+012:10 red dragon 10 marched to city 1 with 100 elements and force 10
+012:10 red ninja 9 marched to city 2 with 100 elements and force 100
+012:10 red wolf 8 marched to city 3 with 10 elements and force 1
+012:10 red lion 7 marched to city 4 with 100 elements and force 100
+012:10 red iceman 6 marched to city 5 with 82 elements and force 50
+012:10 red dragon 5 marched to city 6 with 100 elements and force 10
+012:10 red ninja 4 marched to city 7 with 100 elements and force 100
+012:10 red wolf 3 marched to city 8 with 10 elements and force 1
+012:10 red iceman 1 marched to city 13 with 46 elements and force 130
+012:30 red dragon 10 earned 10 elements for his headquarter
+012:30 red ninja 9 earned 10 elements for his headquarter
+012:30 red wolf 8 earned 10 elements for his headquarter
+012:30 red lion 7 earned 10 elements for his headquarter
+012:30 red iceman 6 earned 10 elements for his headquarter
+012:30 red dragon 5 earned 10 elements for his headquarter
+012:30 red ninja 4 earned 10 elements for his headquarter
+012:30 red wolf 3 earned 50 elements for his headquarter
+012:30 red iceman 1 earned 130 elements for his headquarter
+012:50 870 elements in red headquarter
+012:50 0 elements in blue headquarter
+012:55 red dragon 10 has bomb
+012:55 red ninja 9 has bomb,sword(20)
+012:55 red wolf 8 has no weapon
+012:55 red lion 7 has no weapon
+012:55 red iceman 6 has sword(2)
+012:55 red dragon 5 has arrow(3)
+012:55 red ninja 4 has arrow(3),bomb
+012:55 red wolf 3 has no weapon
+012:55 red iceman 1 has bomb
+013:00 red iceman 11 born
+013:10 red iceman 11 marched to city 1 with 100 elements and force 10
+013:10 red dragon 10 marched to city 2 with 100 elements and force 10
+013:10 red ninja 9 marched to city 3 with 100 elements and force 100
+013:10 red wolf 8 marched to city 4 with 10 elements and force 1
+013:10 red lion 7 marched to city 5 with 100 elements and force 100
+013:10 red iceman 6 marched to city 6 with 73 elements and force 70
+013:10 red dragon 5 marched to city 7 with 100 elements and force 10
+013:10 red ninja 4 marched to city 8 with 100 elements and force 100
+013:10 red wolf 3 marched to city 9 with 10 elements and force 1
+013:10 red iceman 1 marched to city 14 with 37 elements and force 150
+013:30 red iceman 11 earned 10 elements for his headquarter
+013:30 red dragon 10 earned 10 elements for his headquarter
+013:30 red ninja 9 earned 10 elements for his headquarter
+013:30 red wolf 8 earned 10 elements for his headquarter
+013:30 red lion 7 earned 10 elements for his headquarter
+013:30 red iceman 6 earned 10 elements for his headquarter
+013:30 red dragon 5 earned 10 elements for his headquarter
+013:30 red ninja 4 earned 10 elements for his headquarter
+013:30 red wolf 3 earned 50 elements for his headquarter
+013:30 red iceman 1 earned 140 elements for his headquarter
+013:50 1040 elements in red headquarter
+013:50 0 elements in blue headquarter
+013:55 red iceman 11 has arrow(3)
+013:55 red dragon 10 has bomb
+013:55 red ninja 9 has bomb,sword(20)
+013:55 red wolf 8 has no weapon
+013:55 red lion 7 has no weapon
+013:55 red iceman 6 has sword(2)
+013:55 red dragon 5 has arrow(3)
+013:55 red ninja 4 has arrow(3),bomb
+013:55 red wolf 3 has no weapon
+013:55 red iceman 1 has bomb
+014:00 red lion 12 born
+Its loyalty is 940
+014:10 red lion 12 marched to city 1 with 100 elements and force 100
+014:10 red iceman 11 marched to city 2 with 91 elements and force 30
+014:10 red dragon 10 marched to city 3 with 100 elements and force 10
+014:10 red ninja 9 marched to city 4 with 100 elements and force 100
+014:10 red wolf 8 marched to city 5 with 10 elements and force 1
+014:10 red lion 7 marched to city 6 with 100 elements and force 100
+014:10 red iceman 6 marched to city 7 with 73 elements and force 70
+014:10 red dragon 5 marched to city 8 with 100 elements and force 10
+014:10 red ninja 4 marched to city 9 with 100 elements and force 100
+014:10 red wolf 3 marched to city 10 with 10 elements and force 1
+014:10 red iceman 1 marched to city 15 with 37 elements and force 150
+014:30 red lion 12 earned 10 elements for his headquarter
+014:30 red iceman 11 earned 10 elements for his headquarter
+014:30 red dragon 10 earned 10 elements for his headquarter
+014:30 red ninja 9 earned 10 elements for his headquarter
+014:30 red wolf 8 earned 10 elements for his headquarter
+014:30 red lion 7 earned 10 elements for his headquarter
+014:30 red iceman 6 earned 10 elements for his headquarter
+014:30 red dragon 5 earned 10 elements for his headquarter
+014:30 red ninja 4 earned 10 elements for his headquarter
+014:30 red wolf 3 earned 50 elements for his headquarter
+014:30 red iceman 1 earned 150 elements for his headquarter
+014:50 1230 elements in red headquarter
+014:50 0 elements in blue headquarter
+014:55 red lion 12 has no weapon
+014:55 red iceman 11 has arrow(3)
+014:55 red dragon 10 has bomb
+014:55 red ninja 9 has bomb,sword(20)
+014:55 red wolf 8 has no weapon
+014:55 red lion 7 has no weapon
+014:55 red iceman 6 has sword(2)
+014:55 red dragon 5 has arrow(3)
+014:55 red ninja 4 has arrow(3),bomb
+014:55 red wolf 3 has no weapon
+014:55 red iceman 1 has bomb
+015:00 red wolf 13 born
+015:10 red wolf 13 marched to city 1 with 10 elements and force 1
+015:10 red lion 12 marched to city 2 with 100 elements and force 100
+015:10 red iceman 11 marched to city 3 with 91 elements and force 30
+015:10 red dragon 10 marched to city 4 with 100 elements and force 10
+015:10 red ninja 9 marched to city 5 with 100 elements and force 100
+015:10 red wolf 8 marched to city 6 with 10 elements and force 1
+015:10 red lion 7 marched to city 7 with 100 elements and force 100
+015:10 red iceman 6 marched to city 8 with 64 elements and force 90
+015:10 red dragon 5 marched to city 9 with 100 elements and force 10
+015:10 red ninja 4 marched to city 10 with 100 elements and force 100
+015:10 red wolf 3 marched to city 11 with 10 elements and force 1
+015:10 red iceman 1 reached blue headquarter with 28 elements and force 170
+015:30 red wolf 13 earned 10 elements for his headquarter
+015:30 red lion 12 earned 10 elements for his headquarter
+015:30 red iceman 11 earned 10 elements for his headquarter
+015:30 red dragon 10 earned 10 elements for his headquarter
+015:30 red ninja 9 earned 10 elements for his headquarter
+015:30 red wolf 8 earned 10 elements for his headquarter
+015:30 red lion 7 earned 10 elements for his headquarter
+015:30 red iceman 6 earned 10 elements for his headquarter
+015:30 red dragon 5 earned 10 elements for his headquarter
+015:30 red ninja 4 earned 10 elements for his headquarter
+015:30 red wolf 3 earned 50 elements for his headquarter
+015:50 1370 elements in red headquarter
+015:50 0 elements in blue headquarter
+015:55 red wolf 13 has no weapon
+015:55 red lion 12 has no weapon
+015:55 red iceman 11 has arrow(3)
+015:55 red dragon 10 has bomb
+015:55 red ninja 9 has bomb,sword(20)
+015:55 red wolf 8 has no weapon
+015:55 red lion 7 has no weapon
+015:55 red iceman 6 has sword(2)
+015:55 red dragon 5 has arrow(3)
+015:55 red ninja 4 has arrow(3),bomb
+015:55 red wolf 3 has no weapon
+015:55 red iceman 1 has bomb
+016:00 red ninja 14 born
+016:10 red ninja 14 marched to city 1 with 100 elements and force 100
+016:10 red wolf 13 marched to city 2 with 10 elements and force 1
+016:10 red lion 12 marched to city 3 with 100 elements and force 100
+016:10 red iceman 11 marched to city 4 with 82 elements and force 50
+016:10 red dragon 10 marched to city 5 with 100 elements and force 10
+016:10 red ninja 9 marched to city 6 with 100 elements and force 100
+016:10 red wolf 8 marched to city 7 with 10 elements and force 1
+016:10 red lion 7 marched to city 8 with 100 elements and force 100
+016:10 red iceman 6 marched to city 9 with 64 elements and force 90
+016:10 red dragon 5 marched to city 10 with 100 elements and force 10
+016:10 red ninja 4 marched to city 11 with 100 elements and force 100
+016:10 red wolf 3 marched to city 12 with 10 elements and force 1
+016:30 red ninja 14 earned 10 elements for his headquarter
+016:30 red wolf 13 earned 10 elements for his headquarter
+016:30 red lion 12 earned 10 elements for his headquarter
+016:30 red iceman 11 earned 10 elements for his headquarter
+016:30 red dragon 10 earned 10 elements for his headquarter
+016:30 red ninja 9 earned 10 elements for his headquarter
+016:30 red wolf 8 earned 10 elements for his headquarter
+016:30 red lion 7 earned 10 elements for his headquarter
+016:30 red iceman 6 earned 10 elements for his headquarter
+016:30 red dragon 5 earned 10 elements for his headquarter
+016:30 red ninja 4 earned 10 elements for his headquarter
+016:30 red wolf 3 earned 50 elements for his headquarter
+016:50 1430 elements in red headquarter
+016:50 0 elements in blue headquarter
+016:55 red ninja 14 has arrow(3),sword(20)
+016:55 red wolf 13 has no weapon
+016:55 red lion 12 has no weapon
+016:55 red iceman 11 has arrow(3)
+016:55 red dragon 10 has bomb
+016:55 red ninja 9 has bomb,sword(20)
+016:55 red wolf 8 has no weapon
+016:55 red lion 7 has no weapon
+016:55 red iceman 6 has sword(2)
+016:55 red dragon 5 has arrow(3)
+016:55 red ninja 4 has arrow(3),bomb
+016:55 red wolf 3 has no weapon
+016:55 red iceman 1 has bomb
+017:00 red dragon 15 born
+Its morale is 13.30
+017:10 red dragon 15 marched to city 1 with 100 elements and force 10
+017:10 red ninja 14 marched to city 2 with 100 elements and force 100
+017:10 red wolf 13 marched to city 3 with 10 elements and force 1
+017:10 red lion 12 marched to city 4 with 100 elements and force 100
+017:10 red iceman 11 marched to city 5 with 82 elements and force 50
+017:10 red dragon 10 marched to city 6 with 100 elements and force 10
+017:10 red ninja 9 marched to city 7 with 100 elements and force 100
+017:10 red wolf 8 marched to city 8 with 10 elements and force 1
+017:10 red lion 7 marched to city 9 with 100 elements and force 100
+017:10 red iceman 6 marched to city 10 with 55 elements and force 110
+017:10 red dragon 5 marched to city 11 with 100 elements and force 10
+017:10 red ninja 4 marched to city 12 with 100 elements and force 100
+017:10 red wolf 3 marched to city 13 with 10 elements and force 1
+017:30 red dragon 15 earned 10 elements for his headquarter
+017:30 red ninja 14 earned 10 elements for his headquarter
+017:30 red wolf 13 earned 10 elements for his headquarter
+017:30 red lion 12 earned 10 elements for his headquarter
+017:30 red iceman 11 earned 10 elements for his headquarter
+017:30 red dragon 10 earned 10 elements for his headquarter
+017:30 red ninja 9 earned 10 elements for his headquarter
+017:30 red wolf 8 earned 10 elements for his headquarter
+017:30 red lion 7 earned 10 elements for his headquarter
+017:30 red iceman 6 earned 10 elements for his headquarter
+017:30 red dragon 5 earned 10 elements for his headquarter
+017:30 red ninja 4 earned 10 elements for his headquarter
+017:30 red wolf 3 earned 50 elements for his headquarter
+017:50 1500 elements in red headquarter
+017:50 0 elements in blue headquarter
+017:55 red dragon 15 has sword(2)
+017:55 red ninja 14 has arrow(3),sword(20)
+017:55 red wolf 13 has no weapon
+017:55 red lion 12 has no weapon
+017:55 red iceman 11 has arrow(3)
+017:55 red dragon 10 has bomb
+017:55 red ninja 9 has bomb,sword(20)
+017:55 red wolf 8 has no weapon
+017:55 red lion 7 has no weapon
+017:55 red iceman 6 has sword(2)
+017:55 red dragon 5 has arrow(3)
+017:55 red ninja 4 has arrow(3),bomb
+017:55 red wolf 3 has no weapon
+017:55 red iceman 1 has bomb
+018:00 red iceman 16 born
+018:10 red iceman 16 marched to city 1 with 100 elements and force 10
+018:10 red dragon 15 marched to city 2 with 100 elements and force 10
+018:10 red ninja 14 marched to city 3 with 100 elements and force 100
+018:10 red wolf 13 marched to city 4 with 10 elements and force 1
+018:10 red lion 12 marched to city 5 with 100 elements and force 100
+018:10 red iceman 11 marched to city 6 with 73 elements and force 70
+018:10 red dragon 10 marched to city 7 with 100 elements and force 10
+018:10 red ninja 9 marched to city 8 with 100 elements and force 100
+018:10 red wolf 8 marched to city 9 with 10 elements and force 1
+018:10 red lion 7 marched to city 10 with 100 elements and force 100
+018:10 red iceman 6 marched to city 11 with 55 elements and force 110
+018:10 red dragon 5 marched to city 12 with 100 elements and force 10
+018:10 red ninja 4 marched to city 13 with 100 elements and force 100
+018:10 red wolf 3 marched to city 14 with 10 elements and force 1
+018:30 red iceman 16 earned 10 elements for his headquarter
+018:30 red dragon 15 earned 10 elements for his headquarter
+018:30 red ninja 14 earned 10 elements for his headquarter
+018:30 red wolf 13 earned 10 elements for his headquarter
+018:30 red lion 12 earned 10 elements for his headquarter
+018:30 red iceman 11 earned 10 elements for his headquarter
+018:30 red dragon 10 earned 10 elements for his headquarter
+018:30 red ninja 9 earned 10 elements for his headquarter
+018:30 red wolf 8 earned 10 elements for his headquarter
+018:30 red lion 7 earned 10 elements for his headquarter
+018:30 red iceman 6 earned 10 elements for his headquarter
+018:30 red dragon 5 earned 10 elements for his headquarter
+018:30 red ninja 4 earned 10 elements for his headquarter
+018:30 red wolf 3 earned 50 elements for his headquarter
+018:50 1580 elements in red headquarter
+018:50 0 elements in blue headquarter
+018:55 red iceman 16 has bomb
+018:55 red dragon 15 has sword(2)
+018:55 red ninja 14 has arrow(3),sword(20)
+018:55 red wolf 13 has no weapon
+018:55 red lion 12 has no weapon
+018:55 red iceman 11 has arrow(3)
+018:55 red dragon 10 has bomb
+018:55 red ninja 9 has bomb,sword(20)
+018:55 red wolf 8 has no weapon
+018:55 red lion 7 has no weapon
+018:55 red iceman 6 has sword(2)
+018:55 red dragon 5 has arrow(3)
+018:55 red ninja 4 has arrow(3),bomb
+018:55 red wolf 3 has no weapon
+018:55 red iceman 1 has bomb
+019:00 red lion 17 born
+Its loyalty is 1480
+019:10 red lion 17 marched to city 1 with 100 elements and force 100
+019:10 red iceman 16 marched to city 2 with 91 elements and force 30
+019:10 red dragon 15 marched to city 3 with 100 elements and force 10
+019:10 red ninja 14 marched to city 4 with 100 elements and force 100
+019:10 red wolf 13 marched to city 5 with 10 elements and force 1
+019:10 red lion 12 marched to city 6 with 100 elements and force 100
+019:10 red iceman 11 marched to city 7 with 73 elements and force 70
+019:10 red dragon 10 marched to city 8 with 100 elements and force 10
+019:10 red ninja 9 marched to city 9 with 100 elements and force 100
+019:10 red wolf 8 marched to city 10 with 10 elements and force 1
+019:10 red lion 7 marched to city 11 with 100 elements and force 100
+019:10 red iceman 6 marched to city 12 with 46 elements and force 130
+019:10 red dragon 5 marched to city 13 with 100 elements and force 10
+019:10 red ninja 4 marched to city 14 with 100 elements and force 100
+019:10 red wolf 3 marched to city 15 with 10 elements and force 1
+019:30 red lion 17 earned 10 elements for his headquarter
+019:30 red iceman 16 earned 10 elements for his headquarter
+019:30 red dragon 15 earned 10 elements for his headquarter
+019:30 red ninja 14 earned 10 elements for his headquarter
+019:30 red wolf 13 earned 10 elements for his headquarter
+019:30 red lion 12 earned 10 elements for his headquarter
+019:30 red iceman 11 earned 10 elements for his headquarter
+019:30 red dragon 10 earned 10 elements for his headquarter
+019:30 red ninja 9 earned 10 elements for his headquarter
+019:30 red wolf 8 earned 10 elements for his headquarter
+019:30 red lion 7 earned 10 elements for his headquarter
+019:30 red iceman 6 earned 10 elements for his headquarter
+019:30 red dragon 5 earned 10 elements for his headquarter
+019:30 red ninja 4 earned 10 elements for his headquarter
+019:30 red wolf 3 earned 50 elements for his headquarter
+019:50 1670 elements in red headquarter
+019:50 0 elements in blue headquarter
+019:55 red lion 17 has no weapon
+019:55 red iceman 16 has bomb
+019:55 red dragon 15 has sword(2)
+019:55 red ninja 14 has arrow(3),sword(20)
+019:55 red wolf 13 has no weapon
+019:55 red lion 12 has no weapon
+019:55 red iceman 11 has arrow(3)
+019:55 red dragon 10 has bomb
+019:55 red ninja 9 has bomb,sword(20)
+019:55 red wolf 8 has no weapon
+019:55 red lion 7 has no weapon
+019:55 red iceman 6 has sword(2)
+019:55 red dragon 5 has arrow(3)
+019:55 red ninja 4 has arrow(3),bomb
+019:55 red wolf 3 has no weapon
+019:55 red iceman 1 has bomb
+020:00 red wolf 18 born
+020:10 red wolf 18 marched to city 1 with 10 elements and force 1
+020:10 red lion 17 marched to city 2 with 100 elements and force 100
+020:10 red iceman 16 marched to city 3 with 91 elements and force 30
+020:10 red dragon 15 marched to city 4 with 100 elements and force 10
+020:10 red ninja 14 marched to city 5 with 100 elements and force 100
+020:10 red wolf 13 marched to city 6 with 10 elements and force 1
+020:10 red lion 12 marched to city 7 with 100 elements and force 100
+020:10 red iceman 11 marched to city 8 with 64 elements and force 90
+020:10 red dragon 10 marched to city 9 with 100 elements and force 10
+020:10 red ninja 9 marched to city 10 with 100 elements and force 100
+020:10 red wolf 8 marched to city 11 with 10 elements and force 1
+020:10 red lion 7 marched to city 12 with 100 elements and force 100
+020:10 red iceman 6 marched to city 13 with 46 elements and force 130
+020:10 red dragon 5 marched to city 14 with 100 elements and force 10
+020:10 red ninja 4 marched to city 15 with 100 elements and force 100
+020:10 red wolf 3 reached blue headquarter with 10 elements and force 1
+020:10 blue headquarter was taken
