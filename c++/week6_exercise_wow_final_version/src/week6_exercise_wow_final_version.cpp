@@ -157,9 +157,11 @@ public:
 	bool hasDead();
 	bool willDead(int damage);
 	void showBaseInfo();
-	void attack(Warrior * enemy, City * city);
-	virtual void fightBack(Warrior * enemy, City * city);
-	void beKilled(City * city);
+	void attack(Warrior * enemy);
+	void attackEvent(Warrior * enemy, City * city);
+	virtual void fightBack(Warrior * enemy);
+	virtual void fightBackEvent(Warrior * enemy, City * city);
+	void beKilledEvent(City * city);
 	void beAttacked(int damage);
 	void addElements(int elements);
 	void showElementsAndForceInfo();
@@ -259,7 +261,8 @@ public:
 	bool useBomb();
 	int getSwordForce();
 	int useSword();
-	void fightBack(Warrior * enemy, City * city);
+	void fightBack(Warrior * enemy);
+	void fightBackEvent(Warrior * enemy, City * city);
 	Weapon ** getWeapons();
 };
 
@@ -417,7 +420,7 @@ void warriorsUseArrow(int amount) {
 						cout << " shot";
 						if (nextCity->getRedWarrior()->hasDead()) {
 							cout << " and killed ";
-							nextCity->getBlueWarrior()->showBaseInfo();
+							nextCity->getRedWarrior()->showBaseInfo();
 						}
 						cout << endl;
 					}
@@ -540,6 +543,9 @@ void warriorsBattle(int amount) {
 	if (debug) {
 		cout << "test warriorsBattle" << endl;
 	}
+	//战斗前Lion的生命值
+	int redLionElements = 0, blueLionElements = 0;
+//	Warrior *winner = NULL;
 	//由于“如果司令部的生命元不足以奖励所有的武士，则优先奖励距离敌方司令部近的武士”的原则，
 	//从西到东发生战斗，如果红武士获胜，则直接获得奖励，并取走城市中的生命元
 	//如果蓝武士获胜，先做出标记，再从东向西奖励
@@ -548,37 +554,23 @@ void warriorsBattle(int amount) {
 			City * curCity = cities[c];
 			Warrior * red = curCity->getRedWarrior(), *blue =
 					curCity->getBlueWarrior();
-//			if (debug) {
-//				cout << " in city " << curCity->getId();
-//				if (red) {
-//					cout << ' ';
-//					red->showBaseInfo();
-////					cout << " hasDead:" << red->hasDead();
-//				} else {
-//					cout << " red is null ";
-//				}
-//				if (blue) {
-//					cout << ' ';
-//					blue->showBaseInfo();
-////					cout << " hasDead:" << red->hasDead();
-//				} else {
-//					cout << " blue is null ";
-//				}
-//				cout << endl;
-//			}
 			if (red && blue) {
-				//战斗前记录Lion的生命值
-				int redLionElements = 0, blueLionElements = 0;
+				//reset
+				redLionElements = 0, blueLionElements = 0;
+//				winner = NULL;
 				if (red->hasDead() || blue->hasDead()) {//开始战斗前，如果有一个武士在5分钟前被射死，则存活的武士为胜利者
 					if (red->hasDead()) {
+//						winner = blue;
 						blue->getVictory(red, curCity);
 						curCity->updateWinTimes(blue);
 					}
 					if (blue->hasDead()) {
+//						winner = red;
 						red->getVictory(blue, curCity);
 						curCity->updateWinTimes(red);
 					}
 				} else {	//两个都还活着，则正常战斗
+					//战斗前记录Lion的生命值
 					if (red->getCategory() == LION) {
 						redLionElements = red->getElements();
 					}
@@ -594,15 +586,17 @@ void warriorsBattle(int amount) {
 						beAttckedOne = red;
 					}
 					if (activeAttacker && beAttckedOne) {
-						activeAttacker->attack(beAttckedOne, curCity);
+						activeAttacker->attack(beAttckedOne);
+						activeAttacker->attackEvent(beAttckedOne, curCity);
 						if (beAttckedOne->hasDead()) {	//主动攻击获胜
-							beAttckedOne->beKilled(curCity);
+							beAttckedOne->beKilledEvent(curCity);
 							activeAttacker->getVictory(beAttckedOne, curCity);
 							curCity->updateWinTimes(activeAttacker);
 						} else {
-							beAttckedOne->fightBack(activeAttacker, curCity);
+							beAttckedOne->fightBack(activeAttacker);
+							beAttckedOne->fightBackEvent(activeAttacker, curCity);
 							if (activeAttacker->hasDead()) {	//反击获胜
-								activeAttacker->beKilled(curCity);
+								activeAttacker->beKilledEvent(curCity);
 								beAttckedOne->getVictory(activeAttacker,
 										curCity);
 								curCity->updateWinTimes(beAttckedOne);
@@ -616,7 +610,8 @@ void warriorsBattle(int amount) {
 				}
 				//武士死亡后消失
 				if (red->hasDead()) {
-//					blueHeadquarter->awardWarrior(blue);
+					blueHeadquarter->awardWarrior(blue);
+					blue->earnElements(curCity->getElements());
 					redHeadquarter->removeDeadWarrior(red->getNum());
 					curCity->setRedWarrior(NULL);
 					//lion 若是战死，则其战斗前的生命值就会转移到对手身上。所谓“战斗前”，就是每个小时的40分前的一瞬间。
@@ -634,26 +629,27 @@ void warriorsBattle(int amount) {
 					}
 					curCity->updateFlag();
 				}
-			}
-		}
-	}
-	//蓝方从东到西奖励武士
-	for (int c = amount - 1; c >= 0; c--) {
-		if (cities[c] && cities[c]->isBlueWin()) {
-			blueHeadquarter->awardWarrior(cities[c]->getBlueWarrior());
-		}
-	}
-	//司令部总是先完成全部奖励工作，然后才开始从各个打了胜仗的城市回收生命元
-	for (int c = 0; c < amount; c++) {
-		if (cities[c]) {
-			City * curCity = cities[c];
-			if (curCity->isBlueWin()) {
-				curCity->getBlueWarrior()->earnElements(curCity->getElements());
-				//升起旗帜
 				curCity->updateFlag();
 			}
 		}
 	}
+//	//蓝方从东到西奖励武士
+//	for (int c = amount - 1; c >= 0; c--) {
+//		if (cities[c] && cities[c]->isBlueWin()) {
+//			blueHeadquarter->awardWarrior(cities[c]->getBlueWarrior());
+//		}
+//	}
+//	//司令部总是先完成全部奖励工作，然后才开始从各个打了胜仗的城市回收生命元
+//	for (int c = 0; c < amount; c++) {
+//		if (cities[c]) {
+//			City * curCity = cities[c];
+//			if (curCity->isBlueWin()) {
+//				curCity->getBlueWarrior()->earnElements(curCity->getElements());
+//				//升起旗帜
+//				curCity->updateFlag();
+//			}
+//		}
+//	}
 }
 
 City::City(int id) :
@@ -842,10 +838,11 @@ bool Warrior::willDead(int damage) {
 void Warrior::showBaseInfo() {
 	cout << hqName << ' ' << category << ' ' << num;
 }
-void Warrior::attack(Warrior * enemy, City * city) {
+void Warrior::attack(Warrior * enemy){
 	enemy->beAttacked(force);
 	enemy->beAttacked(useSword());
-
+}
+void Warrior::attackEvent(Warrior * enemy, City * city) {
 	showCurrentTime();
 	showBaseInfo();
 	cout << " attacked ";
@@ -853,17 +850,18 @@ void Warrior::attack(Warrior * enemy, City * city) {
 	cout << " in city " << city->getId() << " with ";
 	showElementsAndForceInfo();
 }
-void Warrior::fightBack(Warrior * enemy, City * city) {
-	showCurrentTime();
+void Warrior::fightBack(Warrior * enemy){
 	enemy->beAttacked(force / 2);
-	enemy->beAttacked(useArrow());
-
+	enemy->beAttacked(useSword());
+}
+void Warrior::fightBackEvent(Warrior * enemy, City * city) {
+	showCurrentTime();
 	showBaseInfo();
 	cout << " fought back against ";
 	enemy->showBaseInfo();
 	cout << " in city " << city->getId() << endl;
 }
-void Warrior::beKilled(City * city) {
+void Warrior::beKilledEvent(City * city) {
 	showCurrentTime();
 	showBaseInfo();
 	cout << " was killed in city " << city->getId() << endl;
@@ -1095,7 +1093,10 @@ int Ninja::useSword() {
 	}
 	return 0;
 }
-void Ninja::fightBack(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
+void Ninja::fightBack(Warrior * enemy){
+
+}
+void Ninja::fightBackEvent(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
 
 }
 Weapon ** Ninja::getWeapons() {
@@ -1121,8 +1122,8 @@ bool Iceman::march() {
 			elements = 1;
 		} else {
 			elements -= 9;
-			force += 20;
 		}
+		force += 20;
 		marchedSteps = 0;
 	}
 	return reached;
@@ -1485,6 +1486,11 @@ void showMarchInfo(int amount) { //从西向东
 			redHeadquarter->enemy[i]->showElementsAndForceInfo();
 		}
 	}
+	//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
+	if (blueHeadquarter->seqReachedEnemyHQ >= 2) {
+		showCurrentTime();
+		cout << RED_HQ << " headquarter was taken" << endl;
+	}
 	//中间的N个城市
 	for (int c = 0; c < amount; c++) {
 		if (cities[c]) {
@@ -1522,16 +1528,9 @@ void showMarchInfo(int amount) { //从西向东
 			blueHeadquarter->enemy[i]->showElementsAndForceInfo();
 		}
 	}
-	//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
-	if (redHeadquarter->seqReachedEnemyHQ == 2) {
+	if (redHeadquarter->seqReachedEnemyHQ >= 2) {
 		showCurrentTime();
 		cout << BLUE_HQ << " headquarter was taken" << endl;
-		return;
-	}
-	if (blueHeadquarter->seqReachedEnemyHQ == 2) {
-		showCurrentTime();
-		cout << RED_HQ << " headquarter was taken" << endl;
-		return;
 	}
 }
 void Headquarter::gainElements(int elements) {
