@@ -165,6 +165,7 @@ public:
 	void showElementsAndForceInfo();
 	bool isDragon();
 	bool isWolf();
+	bool isNinja();
 	virtual void getVictory(Warrior * enemy, City * city);
 	virtual void getFailure(City * city);
 	friend void showMarchInfo(int amount);
@@ -176,7 +177,7 @@ class Headquarter {
 	int cityId;
 	int enemyHQCityId;
 	Warrior ** warriors;
-	int seqReachedEnemyHQ;//武士到达敌方司令部的序号
+	int seqReachedEnemyHQ; //武士到达敌方司令部的序号
 
 	int warriorId;
 	int index;
@@ -467,43 +468,53 @@ void warriorsUseBomb(int amount) {
 				//该由红武士主动攻击
 				if (curCity->isRedAttack()) {
 					//蓝武士被攻击
-					if (blue->willDead(red->getForce() + blue->getSwordForce())
-							&& blue->useBomb()) {
-						perishTogether = true;
-						showCurrentTime();
-						blue->showBaseInfo();
-						cout << " used a bomb and killed ";
-						red->showBaseInfo();
-						cout << endl;
-					} else if (red->willDead(
-							blue->getForce() / 2 + blue->getSwordForce())
-							&& red->useBomb()) {	//红武士被反击
-						perishTogether = true;
-						showCurrentTime();
-						red->showBaseInfo();
-						cout << " used a bomb and killed ";
-						blue->showBaseInfo();
-						cout << endl;
+					if (blue->willDead(
+							red->getForce() + red->getSwordForce())) {
+						perishTogether = blue->useBomb();
+						if (perishTogether) {
+							showCurrentTime();
+							blue->showBaseInfo();
+							cout << " used a bomb and killed ";
+							red->showBaseInfo();
+							cout << endl;
+						}
+					} else if (!blue->isNinja()
+							&& red->willDead(
+									blue->getForce() / 2
+											+ blue->getSwordForce())) {	//红武士被反击（Ninja不反击）
+						perishTogether = red->useBomb();
+						if (perishTogether) {
+							showCurrentTime();
+							red->showBaseInfo();
+							cout << " used a bomb and killed ";
+							blue->showBaseInfo();
+							cout << endl;
+						}
 					}
 				} else if (curCity->isBlueAttack()) {	//该由蓝武士主动攻击
 					//红武士被攻击
-					if (red->willDead(blue->getForce() + blue->getSwordForce())
-							&& red->useBomb()) {
-						perishTogether = true;
-						showCurrentTime();
-						red->showBaseInfo();
-						cout << " used a bomb and killed ";
-						blue->showBaseInfo();
-						cout << endl;
-					} else if (blue->willDead(
-							red->getForce() / 2 + blue->getSwordForce())
-							&& blue->useBomb()) {	//蓝武士被反击
-						perishTogether = true;
-						showCurrentTime();
-						blue->showBaseInfo();
-						cout << " used a bomb and killed ";
-						red->showBaseInfo();
-						cout << endl;
+					if (red->willDead(
+							blue->getForce() + blue->getSwordForce())) {
+						perishTogether = red->useBomb();
+						if (perishTogether) {
+							showCurrentTime();
+							red->showBaseInfo();
+							cout << " used a bomb and killed ";
+							blue->showBaseInfo();
+							cout << endl;
+						}
+					} else if (!red->isNinja()
+							&& blue->willDead(
+									red->getForce() / 2
+											+ red->getSwordForce())) {//蓝武士被反击（Ninja不反击）
+						perishTogether = blue->useBomb();
+						if (perishTogether) {
+							showCurrentTime();
+							blue->showBaseInfo();
+							cout << " used a bomb and killed ";
+							red->showBaseInfo();
+							cout << endl;
+						}
 					}
 				}
 				if (debug) {
@@ -770,7 +781,20 @@ bool Warrior::march() {
 	if (reachedEnemyHQ) {
 		return true;
 	}
-	(hqName == RED_HQ) ? cityId++ : cityId--; //前进到下一城市
+	//前进到下一城市之前，先置空当前城市的指针，避免多个城市同时指向同一个武士
+	if (cityId > RED_HQ_CITY_ID && cityId < BLUE_HQ_CITY_ID) {
+		(hqName == RED_HQ) ?
+				cities[cityId - 1]->setRedWarrior(NULL) :
+				cities[cityId - 1]->setBlueWarrior(NULL);
+	}
+	//前进到下一城市
+	(hqName == RED_HQ) ? cityId++ : cityId--;
+	if (debug) {
+		cout << "test march() ";
+		showBaseInfo();
+		cout << " cityId:" << cityId << endl;
+
+	}
 	if (cityId == enemyHQCityId) { //到达敌方司令部
 		if (hqName == RED_HQ) {
 			blueHeadquarter->enemyReached(this);
@@ -778,8 +802,7 @@ bool Warrior::march() {
 			redHeadquarter->enemyReached(this);
 		}
 		reachedEnemyHQ = true;
-	} else { //武士在城市中移动
-		//更新城市中的武士的指针
+	} else { //武士在城市中移动，更新城市中的武士的指针
 		City * curCity = cities[cityId - 1];
 		(hqName == RED_HQ) ?
 				curCity->setRedWarrior(this) : curCity->setBlueWarrior(this);
@@ -809,6 +832,11 @@ bool Warrior::hasDead() {
 	return elements <= 0;
 }
 bool Warrior::willDead(int damage) {
+	if (debug) {
+		cout << "test willDead() ";
+		showBaseInfo();
+		cout << " damage:" << damage << endl;
+	}
 	return elements <= damage;
 }
 void Warrior::showBaseInfo() {
@@ -874,6 +902,9 @@ bool Warrior::isDragon() {
 }
 bool Warrior::isWolf() {
 	return category == WOLF;
+}
+bool Warrior::isNinja() {
+	return category == NINJA;
 }
 void Warrior::getVictory(Warrior * enemy, City * city) {
 
@@ -1373,6 +1404,11 @@ bool Headquarter::createWarrior(string category, int id, int element,
 		warriors[id - 1] = new Wolf(id, element, force, name, cityId,
 				enemyHQCityId);
 	}
+	if (debug) {
+		cout << "test the warrior created is ";
+		warriors[id - 1]->showBaseInfo();
+		cout << endl;
+	}
 	return true;
 }
 bool Headquarter::createWarriorsByOrder() {
@@ -1401,8 +1437,26 @@ void Headquarter::lionRunAway() {
 	}
 }
 bool Headquarter::warriorsMarch() {
+	if (debug) {
+		cout << "test " << name << " warriorsMarch warriorId:" << warriorId
+				<< endl;
+	}
+	bool reached = false;
 	for (int i = 0; i < warriorId; i++) {
+		if (debug) {
+			cout << "warriors[" << i << "] is " << warriors[i];
+			if (warriors[i]) {
+				cout << ' ';
+				warriors[i]->showBaseInfo();
+			}
+			cout << endl;
+		}
 		if (warriors[i]) {
+			if (debug) {
+				warriors[i]->showBaseInfo();
+				cout << " hasReachedEnemyHQ:"
+						<< warriors[i]->hasReachedEnemyHQ() << endl;
+			}
 			if (warriors[i]->hasReachedEnemyHQ()) {
 				continue;
 			}
@@ -1410,16 +1464,16 @@ bool Headquarter::warriorsMarch() {
 				seqReachedEnemyHQ++;
 			}
 			//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
-			if (seqReachedEnemyHQ == 2) {
-				return true;
+			if (seqReachedEnemyHQ >= 2) {
+				reached = true;
 			}
 		}
 	}
-	return false;
+	return reached;
 }
 void showMarchInfo(int amount) { //从西向东
 	if (debug) {
-		cout << "test showMarchInfo ";
+		cout << "test showMarchInfo" << endl;
 	}
 	//首先是红魔司令部
 	for (int i = 0; i < 2; i++) {
@@ -1471,12 +1525,12 @@ void showMarchInfo(int amount) { //从西向东
 	//任何一方的司令部里若是出现了2个敌人，则认为该司令部已被敌人占领
 	if (redHeadquarter->seqReachedEnemyHQ == 2) {
 		showCurrentTime();
-		cout << ' ' << BLUE_HQ << " headquarter was taken";
+		cout << BLUE_HQ << " headquarter was taken" << endl;
 		return;
 	}
 	if (blueHeadquarter->seqReachedEnemyHQ == 2) {
 		showCurrentTime();
-		cout << ' ' << RED_HQ << " headquarter was taken";
+		cout << RED_HQ << " headquarter was taken" << endl;
 		return;
 	}
 }
@@ -1531,7 +1585,7 @@ void Headquarter::enemyReached(Warrior * enemy) {
 int main() {
 	int t; //测试数据的组数
 	cin >> t;
-	bool stop = false;
+	bool stop = false, redReached = false, blueReached = false;
 	for (int i = 1; i <= t; i++) {
 		cin >> M >> N >> R >> K >> T;
 		for (int e = 0; e < 5; e++) {
@@ -1556,6 +1610,8 @@ int main() {
 				RED_HQ_CITY_ID, blueOrder);
 
 		stop = false;
+		redReached = false;
+		blueReached = false;
 		cout << "Case " << i << ':' << endl;
 		for (curTime = 0; curTime <= T; curTime++) {
 			if (debug) {
@@ -1571,9 +1627,10 @@ int main() {
 				blueHeadquarter->lionRunAway();
 				break;
 			case 10: //武士前进到某一城市/抵达敌军司令部/司令部被占领
-				stop = redHeadquarter->warriorsMarch()
-						|| blueHeadquarter->warriorsMarch();
+				redReached = redHeadquarter->warriorsMarch();
+				blueReached = blueHeadquarter->warriorsMarch();
 				showMarchInfo(N);
+				stop = redReached || blueReached;
 				break;
 			case 20: //每个城市产出10个生命元
 				cityCreateElements(N);
