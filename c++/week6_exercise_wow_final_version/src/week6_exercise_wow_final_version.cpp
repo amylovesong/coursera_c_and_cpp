@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <math.h>
 using namespace std;
 
 const bool debug = false;
@@ -234,9 +235,9 @@ public:
 
 class Dragon: public Warrior {
 	Weapon * weapon;
-	float morale;
+	double morale;
 public:
-	Dragon(int num, int elements, float morale, int force, string hqName,
+	Dragon(int num, int elements, double morale, int force, string hqName,
 			int cityId, int enemyHQCityId);
 	~Dragon();
 	void showWeapons();
@@ -594,7 +595,8 @@ void warriorsBattle(int amount) {
 							curCity->updateWinTimes(activeAttacker);
 						} else {
 							beAttckedOne->fightBack(activeAttacker);
-							beAttckedOne->fightBackEvent(activeAttacker, curCity);
+							beAttckedOne->fightBackEvent(activeAttacker,
+									curCity);
 							if (activeAttacker->hasDead()) {	//反击获胜
 								activeAttacker->beKilledEvent(curCity);
 								beAttckedOne->getVictory(activeAttacker,
@@ -838,7 +840,7 @@ bool Warrior::willDead(int damage) {
 void Warrior::showBaseInfo() {
 	cout << hqName << ' ' << category << ' ' << num;
 }
-void Warrior::attack(Warrior * enemy){
+void Warrior::attack(Warrior * enemy) {
 	enemy->beAttacked(force);
 	enemy->beAttacked(useSword());
 }
@@ -850,7 +852,7 @@ void Warrior::attackEvent(Warrior * enemy, City * city) {
 	cout << " in city " << city->getId() << " with ";
 	showElementsAndForceInfo();
 }
-void Warrior::fightBack(Warrior * enemy){
+void Warrior::fightBack(Warrior * enemy) {
 	enemy->beAttacked(force / 2);
 	enemy->beAttacked(useSword());
 }
@@ -911,7 +913,7 @@ void Warrior::getFailure(City * city) {
 
 }
 
-Dragon::Dragon(int num, int elements, float morale, int force, string hqName,
+Dragon::Dragon(int num, int elements, double morale, int force, string hqName,
 		int cityId, int enemyHQCityId) :
 		Warrior(DRAGON, num, elements, force, hqName, cityId, enemyHQCityId), morale(
 				morale) {
@@ -1093,7 +1095,7 @@ int Ninja::useSword() {
 	}
 	return 0;
 }
-void Ninja::fightBack(Warrior * enemy){
+void Ninja::fightBack(Warrior * enemy) {
 
 }
 void Ninja::fightBackEvent(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
@@ -1390,7 +1392,7 @@ bool Headquarter::createWarrior(string category, int id, int element,
 	totalElements -= element;
 	if (category == DRAGON) {
 		warriors[id - 1] = new Dragon(id, element,
-				totalElements / (element * 1.0f), force, name, cityId,
+				totalElements / (element * 1.0), force, name, cityId,
 				enemyHQCityId);
 	} else if (category == NINJA) {
 		warriors[id - 1] = new Ninja(id, element, force, name, cityId,
