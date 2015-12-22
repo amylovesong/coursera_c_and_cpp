@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include <math.h>
+//#include <math.h>
 using namespace std;
 
 const bool debug = false;
@@ -171,6 +171,9 @@ public:
 	bool isNinja();
 	virtual void getVictory(Warrior * enemy, City * city);
 	virtual void getFailure(City * city);
+	virtual Arrow * getArrow();
+	virtual Bomb * getBomb();
+	virtual Sword * getSword();
 	friend void showMarchInfo(int amount);
 };
 
@@ -248,7 +251,10 @@ public:
 	void getVictory(Warrior * enemy, City * city);
 	void getFailure(City * city);
 	void yell(City * city);
-	Weapon * getWeapon();
+//	Weapon * getWeapon();
+	virtual Arrow * getArrow();
+	virtual Bomb * getBomb();
+	virtual Sword * getSword();
 };
 
 class Ninja: public Warrior {
@@ -264,7 +270,10 @@ public:
 	int useSword();
 	void fightBack(Warrior * enemy);
 	void fightBackEvent(Warrior * enemy, City * city);
-	Weapon ** getWeapons();
+//	Weapon ** getWeapons();
+	virtual Arrow * getArrow();
+	virtual Bomb * getBomb();
+	virtual Sword * getSword();
 };
 
 class Iceman: public Warrior {
@@ -280,7 +289,10 @@ public:
 	bool useBomb();
 	int getSwordForce();
 	int useSword();
-	Weapon * getWeapon();
+//	Weapon * getWeapon();
+	virtual Arrow * getArrow();
+	virtual Bomb * getBomb();
+	virtual Sword * getSword();
 };
 
 class Lion: public Warrior {
@@ -748,7 +760,9 @@ Warrior::Warrior(string category, int num, int elements, int force,
 }
 Warrior::~Warrior() {
 	if (debug) {
-		cout << "test ~Warrior() " << hqName << " num:" << num << endl;
+		cout << "test ~Warrior() ";
+		showBaseInfo();
+		cout << endl;
 	}
 }
 string Warrior::getCategory() {
@@ -912,6 +926,15 @@ void Warrior::getVictory(Warrior * enemy, City * city) {
 void Warrior::getFailure(City * city) {
 
 }
+Arrow * Warrior::getArrow() {
+	return NULL;
+}
+Bomb * Warrior::getBomb() {
+	return NULL;
+}
+Sword * Warrior::getSword() {
+	return NULL;
+}
 
 Dragon::Dragon(int num, int elements, double morale, int force, string hqName,
 		int cityId, int enemyHQCityId) :
@@ -997,8 +1020,17 @@ void Dragon::yell(City * city) {
 		cout << " yelled in city " << city->getId() << endl;
 	}
 }
-Weapon * Dragon::getWeapon() {
-	return weapon;
+//Weapon * Dragon::getWeapon() {
+//	return weapon;
+//}
+Arrow * Dragon::getArrow() {
+	return (weapon && weapon->isArrow()) ? (Arrow *) weapon : NULL;
+}
+Bomb * Dragon::getBomb() {
+	return (weapon && weapon->isBomb()) ? (Bomb *) weapon : NULL;
+}
+Sword * Dragon::getSword() {
+	return (weapon && weapon->isSword()) ? (Sword *) weapon : NULL;
 }
 
 Ninja::Ninja(int num, int elements, int force, string hqName, int cityId,
@@ -1101,8 +1133,32 @@ void Ninja::fightBack(Warrior * enemy) {
 void Ninja::fightBackEvent(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
 
 }
-Weapon ** Ninja::getWeapons() {
-	return weapons;
+//Weapon ** Ninja::getWeapons() {
+//	return weapons;
+//}
+Arrow * Ninja::getArrow() {
+	for (int i = 0; i < 2; i++) {
+		if (weapons[i] && weapons[i]->isArrow()) {
+			return (Arrow *) weapons[i];
+		}
+	}
+	return NULL;
+}
+Bomb * Ninja::getBomb() {
+	for (int i = 0; i < 2; i++) {
+		if (weapons[i] && weapons[i]->isBomb()) {
+			return (Bomb *) weapons[i];
+		}
+	}
+	return NULL;
+}
+Sword * Ninja::getSword() {
+	for (int i = 0; i < 2; i++) {
+		if (weapons[i] && weapons[i]->isSword()) {
+			return (Sword *) weapons[i];
+		}
+	}
+	return NULL;
 }
 
 Iceman::Iceman(int num, int elements, int force, string hqName, int cityId,
@@ -1178,8 +1234,17 @@ int Iceman::useSword() {
 	}
 	return 0;
 }
-Weapon * Iceman::getWeapon() {
-	return weapon;
+//Weapon * Iceman::getWeapon() {
+//	return weapon;
+//}
+Arrow * Iceman::getArrow() {
+	return (weapon && weapon->isArrow()) ? (Arrow *) weapon : NULL;
+}
+Bomb * Iceman::getBomb() {
+	return (weapon && weapon->isBomb()) ? (Bomb *) weapon : NULL;
+}
+Sword * Iceman::getSword() {
+	return (weapon && weapon->isSword()) ? (Sword *) weapon : NULL;
 }
 
 Lion::Lion(int num, int elements, int loyalty, int force, string hqName,
@@ -1296,20 +1361,25 @@ int Wolf::useSword() {
 	return 0;
 }
 void Wolf::gainWeaponOfEnemy(Warrior * enemy) {
-	if (enemy->getCategory() == DRAGON) {
-		Weapon * weapon = ((Dragon *) enemy)->getWeapon();
-		setWeapon(weapon);
-	} else if (enemy->getCategory() == ICEMAN) {
-		Weapon * weapon = ((Iceman *) enemy)->getWeapon();
-		setWeapon(weapon);
-	} else if (enemy->getCategory() == NINJA) {
-		Weapon ** weapons = ((Ninja *) enemy)->getWeapons();
-		setWeapon(weapons[0]);
-		setWeapon(weapons[1]);
-	} else if (enemy->getCategory() == WOLF) {
-		Wolf * wolf = (Wolf *) enemy;
-		setArrow(wolf->getArrow());
-	}
+	setArrow(enemy->getArrow());
+	setBomb(enemy->getBomb());
+	setSword(enemy->getSword());
+//	if (enemy->getCategory() == DRAGON) {
+//		Weapon * weapon = ((Dragon *) enemy)->getWeapon();
+//		setWeapon(weapon);
+//	} else if (enemy->getCategory() == ICEMAN) {
+//		Weapon * weapon = ((Iceman *) enemy)->getWeapon();
+//		setWeapon(weapon);
+//	} else if (enemy->getCategory() == NINJA) {
+//		Weapon ** weapons = ((Ninja *) enemy)->getWeapons();
+//		setWeapon(weapons[0]);
+//		setWeapon(weapons[1]);
+//	} else if (enemy->getCategory() == WOLF) {
+//		Wolf * wolf = (Wolf *) enemy;
+//		setArrow(wolf->getArrow());
+//		setBomb(wolf->getBomb());
+//		setSword(wolf->getSword());
+//	}
 }
 void Wolf::setWeapon(Weapon * weapon) {
 	if (weapon) {
@@ -1433,6 +1503,16 @@ void Headquarter::lionRunAway() {
 				showCurrentTime();
 				lion->runAway();
 				//Lion逃跑后消失
+				//置空所在城市的指针
+				int cityId = lion->getCityId();
+				if (debug) {
+					cout << "test lionRunAway cityId:" << cityId << endl;
+				}
+				if (cityId > RED_HQ_CITY_ID && cityId < BLUE_HQ_CITY_ID) {
+					(lion->getHQName() == RED_HQ) ?
+							cities[cityId - 1]->setRedWarrior(NULL) :
+							cities[cityId - 1]->setBlueWarrior(NULL);
+				}
 				delete warriors[i];
 				warriors[i] = NULL;
 			}
