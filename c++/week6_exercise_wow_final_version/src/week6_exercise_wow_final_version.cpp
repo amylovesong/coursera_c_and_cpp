@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <iomanip>
-//#include <math.h>
 using namespace std;
 
 const bool debug = false;
@@ -158,11 +157,9 @@ public:
 	bool hasDead();
 	bool willDead(int damage);
 	void showBaseInfo();
-	void attack(Warrior * enemy);
-	void attackEvent(Warrior * enemy, City * city);
-	virtual void fightBack(Warrior * enemy);
-	virtual void fightBackEvent(Warrior * enemy, City * city);
-	void beKilledEvent(City * city);
+	void attack(Warrior * enemy, City * city);
+	virtual void fightBack(Warrior * enemy, City * city);
+	void beKilled(City * city);
 	void beAttacked(int damage);
 	void addElements(int elements);
 	void showElementsAndForceInfo();
@@ -251,7 +248,6 @@ public:
 	void getVictory(Warrior * enemy, City * city);
 	void getFailure(City * city);
 	void yell(City * city);
-//	Weapon * getWeapon();
 	virtual Arrow * getArrow();
 	virtual Bomb * getBomb();
 	virtual Sword * getSword();
@@ -268,9 +264,7 @@ public:
 	bool useBomb();
 	int getSwordForce();
 	int useSword();
-	void fightBack(Warrior * enemy);
-	void fightBackEvent(Warrior * enemy, City * city);
-//	Weapon ** getWeapons();
+	void fightBack(Warrior * enemy, City * city);
 	virtual Arrow * getArrow();
 	virtual Bomb * getBomb();
 	virtual Sword * getSword();
@@ -289,7 +283,6 @@ public:
 	bool useBomb();
 	int getSwordForce();
 	int useSword();
-//	Weapon * getWeapon();
 	virtual Arrow * getArrow();
 	virtual Bomb * getBomb();
 	virtual Sword * getSword();
@@ -330,7 +323,6 @@ public:
 	void setBomb(Bomb * newBomb);
 	Sword * getSword();
 	void setSword(Sword * newSword);
-	void setWeapon(Weapon * weapon);
 	void getVictory(Warrior * enemy, City * city);
 };
 
@@ -558,10 +550,6 @@ void warriorsBattle(int amount) {
 	}
 	//战斗前Lion的生命值
 	int redLionElements = 0, blueLionElements = 0;
-//	Warrior *winner = NULL;
-	//由于“如果司令部的生命元不足以奖励所有的武士，则优先奖励距离敌方司令部近的武士”的原则，
-	//从西到东发生战斗，如果红武士获胜，则直接获得奖励，并取走城市中的生命元
-	//如果蓝武士获胜，先做出标记，再从东向西奖励
 	for (int c = 0; c < amount; c++) {
 		if (cities[c]) {
 			City * curCity = cities[c];
@@ -570,15 +558,12 @@ void warriorsBattle(int amount) {
 			if (red && blue) {
 				//reset
 				redLionElements = 0, blueLionElements = 0;
-//				winner = NULL;
 				if (red->hasDead() || blue->hasDead()) {//开始战斗前，如果有一个武士在5分钟前被射死，则存活的武士为胜利者
 					if (red->hasDead()) {
-//						winner = blue;
 						blue->getVictory(red, curCity);
 						curCity->updateWinTimes(blue);
 					}
 					if (blue->hasDead()) {
-//						winner = red;
 						red->getVictory(blue, curCity);
 						curCity->updateWinTimes(red);
 					}
@@ -599,18 +584,18 @@ void warriorsBattle(int amount) {
 						beAttckedOne = red;
 					}
 					if (activeAttacker && beAttckedOne) {
-						activeAttacker->attack(beAttckedOne);
-						activeAttacker->attackEvent(beAttckedOne, curCity);
+//						activeAttacker->attack(beAttckedOne);
+						activeAttacker->attack(beAttckedOne, curCity);
 						if (beAttckedOne->hasDead()) {	//主动攻击获胜
-							beAttckedOne->beKilledEvent(curCity);
+							beAttckedOne->beKilled(curCity);
 							activeAttacker->getVictory(beAttckedOne, curCity);
 							curCity->updateWinTimes(activeAttacker);
 						} else {
-							beAttckedOne->fightBack(activeAttacker);
-							beAttckedOne->fightBackEvent(activeAttacker,
+//							beAttckedOne->fightBack(activeAttacker);
+							beAttckedOne->fightBack(activeAttacker,
 									curCity);
 							if (activeAttacker->hasDead()) {	//反击获胜
-								activeAttacker->beKilledEvent(curCity);
+								activeAttacker->beKilled(curCity);
 								beAttckedOne->getVictory(activeAttacker,
 										curCity);
 								curCity->updateWinTimes(beAttckedOne);
@@ -641,29 +626,11 @@ void warriorsBattle(int amount) {
 					if (blueLionElements > 0) {
 						red->addElements(blueLionElements);
 					}
-					curCity->updateFlag();
 				}
 				curCity->updateFlag();
 			}
 		}
 	}
-//	//蓝方从东到西奖励武士
-//	for (int c = amount - 1; c >= 0; c--) {
-//		if (cities[c] && cities[c]->isBlueWin()) {
-//			blueHeadquarter->awardWarrior(cities[c]->getBlueWarrior());
-//		}
-//	}
-//	//司令部总是先完成全部奖励工作，然后才开始从各个打了胜仗的城市回收生命元
-//	for (int c = 0; c < amount; c++) {
-//		if (cities[c]) {
-//			City * curCity = cities[c];
-//			if (curCity->isBlueWin()) {
-//				curCity->getBlueWarrior()->earnElements(curCity->getElements());
-//				//升起旗帜
-//				curCity->updateFlag();
-//			}
-//		}
-//	}
 }
 
 City::City(int id) :
@@ -854,11 +821,10 @@ bool Warrior::willDead(int damage) {
 void Warrior::showBaseInfo() {
 	cout << hqName << ' ' << category << ' ' << num;
 }
-void Warrior::attack(Warrior * enemy) {
+void Warrior::attack(Warrior * enemy, City * city) {
 	enemy->beAttacked(force);
 	enemy->beAttacked(useSword());
-}
-void Warrior::attackEvent(Warrior * enemy, City * city) {
+
 	showCurrentTime();
 	showBaseInfo();
 	cout << " attacked ";
@@ -866,18 +832,17 @@ void Warrior::attackEvent(Warrior * enemy, City * city) {
 	cout << " in city " << city->getId() << " with ";
 	showElementsAndForceInfo();
 }
-void Warrior::fightBack(Warrior * enemy) {
+void Warrior::fightBack(Warrior * enemy, City * city) {
 	enemy->beAttacked(force / 2);
 	enemy->beAttacked(useSword());
-}
-void Warrior::fightBackEvent(Warrior * enemy, City * city) {
+
 	showCurrentTime();
 	showBaseInfo();
 	cout << " fought back against ";
 	enemy->showBaseInfo();
 	cout << " in city " << city->getId() << endl;
 }
-void Warrior::beKilledEvent(City * city) {
+void Warrior::beKilled(City * city) {
 	showCurrentTime();
 	showBaseInfo();
 	cout << " was killed in city " << city->getId() << endl;
@@ -1020,9 +985,6 @@ void Dragon::yell(City * city) {
 		cout << " yelled in city " << city->getId() << endl;
 	}
 }
-//Weapon * Dragon::getWeapon() {
-//	return weapon;
-//}
 Arrow * Dragon::getArrow() {
 	return (weapon && weapon->isArrow()) ? (Arrow *) weapon : NULL;
 }
@@ -1127,15 +1089,9 @@ int Ninja::useSword() {
 	}
 	return 0;
 }
-void Ninja::fightBack(Warrior * enemy) {
+void Ninja::fightBack(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
 
 }
-void Ninja::fightBackEvent(Warrior * enemy, City * city) { //ninja 挨打了也从不反击敌人。
-
-}
-//Weapon ** Ninja::getWeapons() {
-//	return weapons;
-//}
 Arrow * Ninja::getArrow() {
 	for (int i = 0; i < 2; i++) {
 		if (weapons[i] && weapons[i]->isArrow()) {
@@ -1234,9 +1190,6 @@ int Iceman::useSword() {
 	}
 	return 0;
 }
-//Weapon * Iceman::getWeapon() {
-//	return weapon;
-//}
 Arrow * Iceman::getArrow() {
 	return (weapon && weapon->isArrow()) ? (Arrow *) weapon : NULL;
 }
@@ -1364,33 +1317,6 @@ void Wolf::gainWeaponOfEnemy(Warrior * enemy) {
 	setArrow(enemy->getArrow());
 	setBomb(enemy->getBomb());
 	setSword(enemy->getSword());
-//	if (enemy->getCategory() == DRAGON) {
-//		Weapon * weapon = ((Dragon *) enemy)->getWeapon();
-//		setWeapon(weapon);
-//	} else if (enemy->getCategory() == ICEMAN) {
-//		Weapon * weapon = ((Iceman *) enemy)->getWeapon();
-//		setWeapon(weapon);
-//	} else if (enemy->getCategory() == NINJA) {
-//		Weapon ** weapons = ((Ninja *) enemy)->getWeapons();
-//		setWeapon(weapons[0]);
-//		setWeapon(weapons[1]);
-//	} else if (enemy->getCategory() == WOLF) {
-//		Wolf * wolf = (Wolf *) enemy;
-//		setArrow(wolf->getArrow());
-//		setBomb(wolf->getBomb());
-//		setSword(wolf->getSword());
-//	}
-}
-void Wolf::setWeapon(Weapon * weapon) {
-	if (weapon) {
-		if (weapon->isArrow()) {
-			setArrow((Arrow *) weapon);
-		} else if (weapon->isBomb()) {
-			setBomb((Bomb *) weapon);
-		} else if (weapon->isSword()) {
-			setSword((Sword *) weapon);
-		}
-	}
 }
 void Wolf::getVictory(Warrior * enemy, City * city) {
 	gainWeaponOfEnemy(enemy);
