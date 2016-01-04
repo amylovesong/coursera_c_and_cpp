@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <map>
+#include <cstdio>
 using namespace std;
 
 int main() {
@@ -15,24 +16,30 @@ int main() {
 	members.insert(make_pair(1000000000, 1));
 
 	int n;
-	cin >> n;
+	scanf("%d", &n);
 	int newid, newValue;
 	while (n--) {
-		cin >> newid >> newValue;
-		members.insert(make_pair(newValue, newid));
+		scanf("%d %d", &newid, &newValue);
+		MII::iterator newOne = members.insert(make_pair(newValue, newid));
 		MII::iterator selected;
-		MII::iterator lp = members.lower_bound(newValue);
-		MII::iterator up = members.upper_bound(newValue);
-		if (lp == members.begin()) {
-			selected = up;
+		if (newOne == members.begin()) {
+			newOne++;
+			selected = newOne;
+		} else if (newOne == members.end()) {
+			newOne--;
+			selected = newOne;
 		} else {
-			lp--;
-			selected = lp;
-			if (up->first - newValue < newValue - lp->first) {
-				selected = up;
+			MII::iterator pre = --newOne;
+			newOne++;
+			newOne++;
+			MII::iterator next = newOne;
+
+			selected = pre;//优先用前面的
+			if (next->first - newValue < newValue - pre->first) {//只有当后面的比前面的离当前更近，才用后面的
+				selected = next;
 			}
 		}
-		cout << newid << ' ' << selected->second << endl;
+		printf("%d %d\n", newid, selected->second);
 	}
 
 	return 0;
