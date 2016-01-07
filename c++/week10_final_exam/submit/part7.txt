@@ -1,0 +1,22 @@
+bool operator<(const class A& a1, const class A &a2){
+	return a1.get_size() < a2.get_size();
+}
+class Print{
+public:
+	void operator()(const A & a){
+		cout << a.get_name() << " ";
+	}
+};
+
+void Show(list<A>::iterator first, list<A>::iterator last, Print p){
+	for (;first != last; first++) {
+		p(*first);
+	}
+}
+template <typename T>
+class MyLarge{
+public:
+	bool operator()(A & a1, A & a2){
+		return a1.get_name() < a2.get_name();
+	}
+};

@@ -1,0 +1,8 @@
+typedef int (* pFunc)(int);
+int sum(int a[], int length, pFunc sqr) {
+	int sum = 0;
+	for (int i = 0; i < length; i++) {
+		sum += sqr(a[i]);
+	}
+	return sum;
+}

@@ -1,0 +1,8 @@
+class MyString : public string{
+public:
+	MyString(const char str[]):string(str){}
+	MyString(const string str=""):string(str){}
+	string operator()(int pos, int length){
+		return substr(pos, length);
+	}
+};

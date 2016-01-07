@@ -1,0 +1,29 @@
+class A{
+	string category;
+	int age;
+public:
+	A(int age, string category="A"):category(category), age(age){ }
+	virtual string getCategory(){
+		return category;
+	}
+	virtual int getAge() const{
+		return age;
+	}
+	virtual ~A(){ }
+};
+
+class B : public A{
+public:
+	B(int age):A(age, "B"){ }
+};
+
+struct Comp: public less<A *>{
+public:
+	bool operator()(const A* a, const A* b) const{
+		return a->getAge() < b->getAge();
+	}
+};
+
+void Print(A * a){
+	cout << a->getCategory() << ' ' << a->getAge() << endl;
+}

@@ -1,0 +1,9 @@
+class CMy_add {
+	int & sum;
+public:
+	CMy_add(int & num) : sum(num) { }
+	void operator()(int value) {
+		//二进制低3位：即八进制的最低位
+		sum += value % 8;
+	}
+};

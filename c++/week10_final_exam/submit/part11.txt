@@ -1,0 +1,23 @@
+template <typename Key, typename Value, typename Compare = std::greater<Key> >
+class MyMultimap: public multimap<Key, Value, Compare>{
+public:
+	void Set(const Key & key, Value value){
+		typedef MyMultimap<Key, Value> MMKV;
+		typename MMKV::iterator begin = (this->equal_range(key)).first;
+		typename MMKV::iterator end = (this->equal_range(key)).second;
+//		cout << "begin:" << begin->second << " end:" << end->second << endl;
+		for(;begin != end; begin++){
+			begin->second = value;
+		}
+	}
+};
+
+ostream & operator<<(ostream & o, pair<const string, int> p){
+	o << "(" << p.first << "," << p.second << ")";
+	return o;
+}
+
+ostream & operator<<(ostream & o, pair<const int, string> p){
+	o << "(" << p.first << "," << p.second << ")";
+	return o;
+}

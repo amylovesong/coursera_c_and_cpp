@@ -1,0 +1,6 @@
+    Number operator*(Number & b){
+    	return Number(this->num * b.num);
+    }
+    operator int() const {
+    	return this->num;
+    }

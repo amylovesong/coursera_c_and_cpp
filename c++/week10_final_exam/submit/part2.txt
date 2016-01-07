@@ -1,0 +1,6 @@
+    int & value(){
+    	return this->num;
+    }
+    void operator+(Number & b){
+    	this->num += b.num;
+    }

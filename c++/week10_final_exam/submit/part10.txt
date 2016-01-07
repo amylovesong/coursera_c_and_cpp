@@ -1,0 +1,19 @@
+class A {
+public:
+	static int count;
+	A(int v = 0) {
+		count++;
+	}
+	virtual ~A() {
+		count--;
+		cout << "A::destructor" << endl;
+	}
+};
+class B: public A {
+public:
+	B(B & b){ }
+	B(int v = 0) : A(v) { }
+	virtual ~B() {
+		cout << "B::destructor" << endl;
+	}
+};
