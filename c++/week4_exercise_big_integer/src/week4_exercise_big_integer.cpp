@@ -12,15 +12,17 @@ using namespace std;
 const bool debug = false;
 
 void initArray(short * array, int length) {
-	for (int i = 0; i < length; i++) {
-		array[i] = 0;
-	}
+//	for (int i = 0; i < length; i++) {
+//		array[i] = 0;
+//	}
+	memset(array, 0, length * sizeof(short));
 }
 
 void initArray(int * array, int length) {
-	for (int i = 0; i < length; i++) {
-		array[i] = 0;
-	}
+//	for (int i = 0; i < length; i++) {
+//		array[i] = 0;
+//	}
+	memset(array, 0, length * sizeof(int));
 }
 
 void showArray(const short * array, int length) {
