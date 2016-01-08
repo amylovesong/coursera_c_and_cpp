@@ -12,16 +12,10 @@ using namespace std;
 const bool debug = false;
 
 void initArray(short * array, int length) {
-//	for (int i = 0; i < length; i++) {
-//		array[i] = 0;
-//	}
 	memset(array, 0, length * sizeof(short));
 }
 
 void initArray(int * array, int length) {
-//	for (int i = 0; i < length; i++) {
-//		array[i] = 0;
-//	}
 	memset(array, 0, length * sizeof(int));
 }
 
@@ -257,11 +251,11 @@ BigInt & BigInt::operator*(const BigInt & b) {
 	static BigInt finalResult;
 	convertArray2BigInt(finalResult, result, resultLength);
 
-	delete tmpA;
-	delete tmpB;
-	delete tmpResult;
-	delete tmp;
-	delete result;
+	delete[] tmpA;
+	delete[] tmpB;
+	delete[] tmpResult;
+	delete[] tmp;
+	delete[] result;
 
 	return finalResult;
 }
@@ -438,7 +432,7 @@ bool compare(const BigInt & a, const BigInt & b) {
 		}
 		//如果两数同负，则取反
 		if (!a.flagPositive) {
-			result = ~result;
+			result = !result;
 		}
 	} else {
 		result = (a.flagPositive == true);
